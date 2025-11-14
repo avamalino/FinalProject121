@@ -6,7 +6,7 @@ Summary of Project
 
 ## TEAM
 
-### Tools Lead: 
+### Tools Lead: Ava Malinowski
 
 ### Engine Lead: Kaitlyn Eng
 
