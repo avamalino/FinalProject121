@@ -2,9 +2,9 @@
 
 ## SUMMARY OF PROJECT
 
-our project is a small browser game called **“Campus Courier: Cat Express”**.
+our tentative project is a small browser game called campus cat express.
 
-you play as a student courier (and their cat-themed delivery drone) delivering care packages to different buildings on a stylized campus map. each level gives you a time limit and a set of delivery locations; you have to plan a route, navigate around simple obstacles, and reach all destinations before time runs out. as you progress, more buildings unlock, routes get trickier, and you can earn small upgrades (like extra time or slightly faster movement) for completing optional challenges.
+you play as a cat courier delivering care packages to different buildings through a stylized campus. each level gives you a time limit and a set of delivery locations; you have to plan a route, navigate around simple obstacles, and reach all destinations before time runs out. as you progress, more buildings unlock, routes get trickier, and you can earn small upgrades (like extra time or slightly faster movement) for completing optional challenges.
 
 core goals:
 
