@@ -27,11 +27,11 @@ core goals:
 
 ### Engine
 
-- **custom TypeScript + HTML5 canvas setup** (no third-party game engine; we manage our own loop, rendering, and input)
+- **Love2d, CPML math library, G3D graphics library** 
 
 ### Language
 
-- **TypeScript** – core game logic, state management, and rendering
+- **Lua** – core game logic, state management, and rendering
 
 ### Tools
 
@@ -45,7 +45,7 @@ core goals:
 we plan to use generative AI tools **only during development**, not at runtime in the game:
 
 - brainstorming level ideas, challenge variations, and building names  
-- getting help debugging TypeScript and build issues  
+- getting help debugging lua and love2d code and build issues  
 - drafting and revising documentation text (e.g., this project summary)
 
 no AI-generated content is required for players to run the game.

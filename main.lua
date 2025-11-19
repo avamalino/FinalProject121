@@ -1,62 +1,32 @@
-local box = {
-    x = 100,        -- Initial x-coordinate of the box
-    y = 100,        -- Initial y-coordinate of the box
-    size = 30,      -- Size of the box
-    speed = 300,    -- Speed of the box
-    vx = 1,         -- Initial velocity along the x-axis
-    vy = 1,         -- Initial velocity along the y-axis
-    r = 0,          -- Initial red value
-    g = 0,          -- Initial green value
-    b = 0,          -- Initial blue value
-    color = {r, g, b}, -- Initial color (black)
-    inc = 0.1       -- Color increment
-}
+-- loading the CPML math library
+cpml = require "cpml"
 
--- Disable clearing the screen
-love.graphics.clear = function() end
+--loading the G3D graphics library
+g3d = require "g3d"
 
--- Initialize Love2D
-function love.load()
-    love.window.setTitle("Bouncing Box")
-    love.window.setMode(640, 480)
-    love.graphics.setBackgroundColor(0.01, 0.01, 0.01)
-end
 
--- Update function
+--more demo code to make sure the server and libraries work (code by groverbuger https://github.com/groverburger/g3d?tab=readme-ov-file)
+local earth = g3d.newModel("assets/sphere.obj", "assets/earth.png", {4,0,0})
+local moon = g3d.newModel("assets/sphere.obj", "assets/moon.png", {4,5,0}, nil, 0.5)
+local background = g3d.newModel("assets/sphere.obj", "assets/starfield.png", nil, nil, 500)
+local timer = 0
+
 function love.update(dt)
-    -- Update box position based on velocity and speed
-    box.x = box.x + box.vx * box.speed * dt
-    box.y = box.y + box.vy * box.speed * dt
-    changeColor()
-
-    -- Check for collisions with the edges
-    if box.x <= 0 or (box.x + box.size) >= love.graphics.getWidth() then
-        box.vx = -box.vx -- Reverse x-velocity on collision
-    end
-    if box.y <= 0 or (box.y + box.size) >= love.graphics.getHeight() then
-        box.vy = -box.vy -- Reverse y-velocity on collision
+    timer = timer + dt
+    moon:setTranslation(math.cos(timer)*5 + 4, math.sin(timer)*5, 0)
+    moon:setRotation(0, 0, timer - math.pi/2)
+    g3d.camera.firstPersonMovement(dt)
+    if love.keyboard.isDown "escape" then
+        love.event.push "quit"
     end
 end
 
--- Draw function
 function love.draw()
-    love.graphics.setColor(box.color)
-    love.graphics.rectangle("fill", box.x, box.y, box.size, box.size)
+    earth:draw()
+    moon:draw()
+    background:draw()
 end
 
--- Change box color
-function changeColor()
-    box.r = box.r + box.inc
-    if box.r > 1 then
-        box.r = 0
-        box.g = box.g + box.inc
-    end
-    if box.g > 1 then
-        box.g = 0
-        box.b = box.b + box.inc
-    end
-    if box.b > 1 then
-        box.b = 0
-    end
-    box.color = {box.r, box.g, box.b}
+function love.mousemoved(x,y, dx,dy)
+    g3d.camera.firstPersonLook(dx,dy)
 end
