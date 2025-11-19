@@ -1,0 +1,28 @@
+name: Deploy Game
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize submodules
+      run: |
+        git submodule init
+        git submodule update
+
+    - name: Create game.love file
+      run: |
+        zip -9 -r game.love main.lua lib/ assets/
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
