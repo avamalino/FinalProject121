@@ -17,12 +17,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Prepare files
+        run: |
+          cp main.lua FinalProject.121/
+
       # If you ever need a build step (e.g., bundling) add it here.
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: FinalProject121    # 👈 THIS IS THE KEY PART
+          path: FinalProject121
 
   deploy:
     runs-on: ubuntu-latest
