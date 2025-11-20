@@ -16,8 +16,8 @@ core goals:
 
 ## TEAM
 
-- **Tools Lead:** Ava Malinowski, Nayanika Bhattacharya
-- **Engine Lead:** Kaitlyn Eng  
+- **Tools Lead:** Kaitlyn Eng, Nayanika Bhattacharya
+- **Engine Lead:** Ava Malinowski 
 - **Design Lead:** Arti Gnanasekar  
 - **Testing Lead:** Sonny Trucco
 
