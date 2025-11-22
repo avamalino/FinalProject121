@@ -87,11 +87,12 @@ cd FinalProject121
 # Install dependencies
 npm install
 
-# Run dev server (Deno + Vite)
+# Run dev server
 npm run dev
 
-# Build for production
-npm run build
+# Run server on existing build
+
+npm run serve
 
 ## Installation and build setup document
 https://docs.google.com/document/d/15QVUmpRaRoGL1ZKW5EPcRfyNcnPTTqPUxD0KDNOgr8Y/edit?tab=t.0
