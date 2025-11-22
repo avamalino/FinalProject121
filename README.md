@@ -17,8 +17,8 @@ core goals:
 ## TEAM
 
 - **Tools Lead:** Kaitlyn Eng, Nayanika Bhattacharya
-- **Engine Lead:** Ava Malinowski 
-- **Design Lead:** Arti Gnanasekar  
+- **Engine Lead:** Ava Malinowski
+- **Design Lead:** Arti Gnanasekar
 - **Testing Lead:** Sonny Trucco
 
 ---
@@ -27,7 +27,7 @@ core goals:
 
 ### Engine
 
-- **Love2d, CPML math library, G3D graphics library** 
+- **Love2d, CPML math library, G3D graphics library**
 
 ### Language
 
@@ -35,17 +35,17 @@ core goals:
 
 ### Tools
 
-- **Deno + Vite** – Development server and bundling  
-- **GitHub** – Version control and collaboration  
-- **GitHub Pages** – Deployment via GitHub Actions  
+- **Deno + Vite** – Development server and bundling
+- **GitHub** – Version control and collaboration
+- **GitHub Pages** – Deployment via GitHub Actions
 - **Figma / Excalidraw (optional)** – Quick layout and UI sketches
 
 ### Generative AI
 
 we plan to use generative AI tools **only during development**, not at runtime in the game:
 
-- brainstorming level ideas, challenge variations, and building names  
-- getting help debugging lua and love2d code and build issues  
+- brainstorming level ideas, challenge variations, and building names
+- getting help debugging lua and love2d code and build issues
 - drafting and revising documentation text (e.g., this project summary)
 
 no AI-generated content is required for players to run the game.
@@ -71,8 +71,8 @@ we expect to deliver:
 
 **stretch goals (nice-to-have):**
 
-- simple animations (e.g., cat drone bobbing, delivery “poof” effect)  
-- basic sound effects for movement, successful delivery, and timer warnings  
+- simple animations (e.g., cat drone bobbing, delivery “poof” effect)
+- basic sound effects for movement, successful delivery, and timer warnings
 - a final **summary screen** showing total deliveries, stars, or best time
 
 ---
@@ -96,3 +96,4 @@ npm run serve
 
 ## Installation and build setup document
 https://docs.google.com/document/d/15QVUmpRaRoGL1ZKW5EPcRfyNcnPTTqPUxD0KDNOgr8Y/edit?tab=t.0
+```
