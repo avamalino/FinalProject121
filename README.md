@@ -16,10 +16,10 @@ core goals:
 
 ## TEAM
 
-- **Tools Lead:** Kaitlyn Eng, Nayanika Bhattacharya
-- **Engine Lead:** Ava Malinowski
+- **Tools Lead:** Sonny Trucco
+- **Engine Lead:** Ava Malinowski, Nayanika Bhattacharya
 - **Design Lead:** Arti Gnanasekar
-- **Testing Lead:** Sonny Trucco
+- **Testing Lead:** Kaitlyn Eng
 
 ---
 
@@ -35,7 +35,7 @@ core goals:
 
 ### Tools
 
-- **Deno + Vite** – Development server and bundling
+- **Node + Vite** – Development server, Runtime, and bundling
 - **GitHub** – Version control and collaboration
 - **GitHub Pages** – Deployment via GitHub Actions
 - **Figma / Excalidraw (optional)** – Quick layout and UI sketches
