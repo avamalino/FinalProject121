@@ -97,3 +97,7 @@ npm run serve
 ## Installation and build setup document
 https://docs.google.com/document/d/15QVUmpRaRoGL1ZKW5EPcRfyNcnPTTqPUxD0KDNOgr8Y/edit?tab=t.0
 ```
+
+## Credits
+
+Cat model, Wall model, Floor model, Wall texture, and toolkit: https://sacemakesgame.itch.io/plan-meow
