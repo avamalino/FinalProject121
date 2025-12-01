@@ -16,6 +16,11 @@ function Room1:enter()
         self.player = require('objects.player')(self, 0, 0, 0)
     end
 
+    -- Create a pushable box
+    if not self.box then
+        self.box = require('objects.box')(self, 2, 0, 0) -- Pass room as owner
+    end
+
     self:init_eye_and_sun()
 
     self.solid = {}
@@ -50,12 +55,13 @@ function Room1:init_eye_and_sun()
     self.eye.shader:send('projectionMatrix', 'column', self.eye.projection)
 
     -- Set up fixed angled camera position (higher, better view)
-    self.camera_position = vec3(0, 15, 10) -- Higher and back for better overview
-    self.camera_target = vec3(0, 0, 0)     -- Looking at room center
+    self.camera_position = vec3(0, 12, 8) -- Higher and back for better overview
+    self.camera_target = vec3(0, 0, 0)    -- Looking at room center
 end
 
 function Room1:update(dt)
     self.player:update(dt)
+    self.box:update(dt)
 
     -- Fixed angled camera
     self.eye.transform:look_at(self.camera_position, self.camera_target, vec3(0, 1, 0))
@@ -72,6 +78,9 @@ function Room1:draw()
     -- Draw floor and walls
     self.floor_model:draw()
     self.wall_model:draw()
+
+    -- Draw box
+    self.box:draw()
 
     -- Draw player
     self.player:draw()

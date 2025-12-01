@@ -1,6 +1,6 @@
 local Player = class.vehicle3d:extend()
 
-Player.model = pigic.model('assets/obj/cat.obj', 'assets/png/palette.png')
+Player.model = pigic.model('assets/obj/cat.obj', 'assets/png/cat.png')
 
 function Player:new(owner, x, y, z)
     Player.super.new(self, x, y, z)
@@ -65,6 +65,28 @@ function Player:check_collision()
         end
     end
 
+    -- Check collision with box and push it
+    if self.owner.box then
+        local box = self.owner.box
+        local dx = self.translation.x - box.translation.x
+        local dz = self.translation.z - box.translation.z
+        local dist = math.sqrt(dx * dx + dz * dz)
+        local min_dist = self.radius + box.radius
+
+        if dist < min_dist and dist > 0 then
+            -- Push box away
+            local push_force = 15 -- How hard player pushes
+            local nx = dx / dist
+            local nz = dz / dist
+
+            box:apply_force(vec3(-nx * push_force, 0, -nz * push_force))
+
+            -- Push player back slightly
+            self.translation.x = box.translation.x + nx * min_dist
+            self.translation.z = box.translation.z + nz * min_dist
+        end
+    end
+
     -- Simple boundary clamping for room edges (including the open front)
     if self.owner.room_bounds then
         local bounds = self.owner.room_bounds
@@ -90,7 +112,6 @@ function Player:draw()
     pass.push()
     pass.translate(self.translation)
     pass.rotate(self.yaw, 0, 1, 0)
-    pass.scale(0.5, 0.5, 0.5) -- Make cat smaller
     Player.model:draw()
     pass.pop()
 end
