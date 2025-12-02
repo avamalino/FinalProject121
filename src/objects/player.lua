@@ -65,25 +65,25 @@ function Player:check_collision()
         end
     end
 
-    -- Check collision with box and push it
-    if self.owner.box then
-        local box = self.owner.box
-        local dx = self.translation.x - box.translation.x
-        local dz = self.translation.z - box.translation.z
+    -- Check collision with pushable and push it
+    if self.owner.pushable then
+        local pushable = self.owner.pushable
+        local dx = self.translation.x - pushable.translation.x
+        local dz = self.translation.z - pushable.translation.z
         local dist = math.sqrt(dx * dx + dz * dz)
-        local min_dist = self.radius + box.radius
+        local min_dist = self.radius + pushable.radius
 
         if dist < min_dist and dist > 0 then
-            -- Push box away
+            -- Push pushable away
             local push_force = 15 -- How hard player pushes
             local nx = dx / dist
             local nz = dz / dist
 
-            box:apply_force(vec3(-nx * push_force, 0, -nz * push_force))
+            pushable:apply_force(vec3(-nx * push_force, 0, -nz * push_force))
 
             -- Push player back slightly
-            self.translation.x = box.translation.x + nx * min_dist
-            self.translation.z = box.translation.z + nz * min_dist
+            self.translation.x = pushable.translation.x + nx * min_dist
+            self.translation.z = pushable.translation.z + nz * min_dist
         end
     end
 
