@@ -36,9 +36,11 @@ This actionable todo list is based on the F2 requirements and our existing code.
    - Description: implement concrete actions: picking up removes object from scene and adds it to inventory; examining shows a description panel.
    - Acceptance: items disappear from scene when picked and appear in inventory UI; examine displays details.
 
-6. Physics-Based Puzzle [ ]
+6. Physics-Based Puzzle [x]
    - Description: build a puzzle that uses physics (forces/collisions/momentum). Example: use weighted boxes to tip a platform to open a door.
    - Acceptance: puzzle uses physics computations and is required to progress to a new scene or trigger an important state change.
+
+   - Implementation: `src/objects/sensor.lua` is a sensor that is triggered by having an object pushed on top of it. In this implementation the sensor is used to unlock a door in `src/rooms/room1.lua`.
 
 7. Skill/Reasoning-Based Mechanics [ ]
    - Description: ensure puzzle success depends on player input/skill or reasoning (timing, placement, aiming), not randomness. Provide clear success/failure conditions and allow retries.
