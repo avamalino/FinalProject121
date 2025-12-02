@@ -21,6 +21,10 @@ function Room1:enter()
         self.pushable = require('objects.pushable')(self, 2, 0, 0)
     end
 
+    -- Create a sensor that unlocks the door
+    if not self.sensor then
+        self.sensor = require('objects.sensor')(self, -3, 0, -3.75) -- Put sensor in middle of room
+    end
 
     self.solid = {}
     self.stuff = class.holder(self)
@@ -66,10 +70,12 @@ end
 function Room1:update(dt)
     self.player:update(dt)
     self.pushable:update(dt)
+    self.sensor:update(dt)
     self.stuff:update(dt)
 
     -- Check if player is touching door to transition to room2
-    if not self.transitioning then
+    -- Only allow transition if sensor is activated
+    if not self.transitioning and self.sensor.activated then
         for _, obj in ipairs(self.solid) do
             -- Check sphere intersection with this solid object
             local len = collision.sphereIntersection(
@@ -108,6 +114,9 @@ function Room1:draw()
     self.wall_model:draw()
 
     self.stuff:draw()
+
+    -- Draw sensor
+    self.sensor:draw()
 
     -- Draw pushable
     self.pushable:draw()
