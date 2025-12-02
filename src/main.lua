@@ -1,20 +1,20 @@
 toolkit = require 'toolkit'
-Scene = require 'scenes.scene'
+-- Scene = require 'scenes.scene'
 
 function love.load()
     toolkit:init()
-    gamestate.init(require 'rooms.room1')
-    Scene.load()
+    gamestate.init(Room1)
+    -- Scene.load()
 end
 
 function love.update(dt)
     toolkit:update(dt)
-    Scene:update(dt)
+    --Scene:update(dt)
 end
 
 function love.draw()
     toolkit:draw()
-    Scene:draw()
+    --Scene:draw()
 end
 
 function love.resize(w, h)
