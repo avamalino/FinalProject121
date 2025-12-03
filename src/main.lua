@@ -1,5 +1,7 @@
 toolkit = require 'toolkit'
 Inventory = require 'inventory'
+local Theme = require("theme")
+
 
 function love.load()
     toolkit:init()
@@ -17,6 +19,8 @@ function love.load()
     gamestate.init(Room1)
 
     love.window.setVSync(true)
+
+    Theme.init()
 end
 
 function love.update(dt)
@@ -25,9 +29,14 @@ end
 
 function love.draw()
     toolkit:draw()
+    Theme.drawOverlay()
+    Theme.drawToggle()
 end
 
-function love.resize(w, h) end
+function love.resize(w, h) 
+
+    Theme.onResize(w, h)
+end
 
 function recursive_enumerate(folder, t)
     local items = love.filesystem.getDirectoryItems(folder)
@@ -46,5 +55,11 @@ function require_files(t)
     for _, file in ipairs(t) do
         local file = file:sub(1, -5)
         require(file)
+    end
+end
+
+function love.mousepressed(x, y, button, istouch, presses)
+    if Theme.mousepressed(x, y, button) then
+        return
     end
 end
