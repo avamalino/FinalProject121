@@ -32,6 +32,10 @@ function Room1:enter()
     self.door = self.stuff:add(Door, 3, 0, -4.25)
     table.insert(self.solid, self.door)
 
+    -- Add suitcase to inventory puzzle
+    self.suitcase = self.stuff:add(Suitcase, -2, 0, 2, { angle = 0, axis = vec3(0, 1, 0) })
+    table.insert(self.solid, self.suitcase)
+
     self:init_eye_and_sun()
 
     -- Load floor model
@@ -75,6 +79,30 @@ function Room1:update(dt)
     self.pushable:update(dt)
     self.sensor:update(dt)
     self.stuff:update(dt)
+
+    -- Check if player can pick up suitcase
+    if self.suitcase and not self.suitcase.collected then
+        -- Calculate distance between player and suitcase
+        local dx = self.player.translation.x - self.suitcase.translation.x
+        local dy = self.player.translation.y - self.suitcase.translation.y
+        local dz = self.player.translation.z - self.suitcase.translation.z
+        local dist = math.sqrt(dx * dx + dy * dy + dz * dz)
+
+        -- If player is close enough and presses interact, pick it up
+        local pickup_distance = self.player.radius + 1.5
+        if dist < pickup_distance and input:pressed('interact') then
+            self.suitcase.collected = true
+            -- Add to global inventory
+            Inventory:add('suitcase')
+            -- Remove from solid array so player doesn't collide with it
+            for i, solid in ipairs(self.solid) do
+                if solid == self.suitcase then
+                    table.remove(self.solid, i)
+                    break
+                end
+            end
+        end
+    end
 
     -- Check if player is touching door to transition to room2
     -- Only allow transition if sensor is activated
@@ -121,6 +149,20 @@ function Room1:draw()
 
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
+
+    -- Display inventory contents
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print("Inventory:", 10, 10)
+    local y_offset = 30
+    for i, item in ipairs(Inventory.items) do
+        love.graphics.print("- " .. item, 10, y_offset)
+        y_offset = y_offset + 20
+    end
+
+    -- Display controls in top right
+    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact"
+    local text_width = love.graphics.getFont():getWidth("Controls:")
+    love.graphics.printf(controls_text, love.graphics.getWidth() - text_width - 150, 10, 200, 'left')
 end
 
 function Room1:exit()

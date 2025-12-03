@@ -1,8 +1,8 @@
 local collision = require(pigic.collision)
 
-Room2 = {}
+Room3 = {}
 
-function Room2:enter()
+function Room3:enter()
     if not self.camera then
         self.camera = class.camera3d(self)
         self.camera:add_camera('default', 0, 50, 50)
@@ -19,12 +19,8 @@ function Room2:enter()
     self.solid = {}
     self.stuff = class.holder(self)
 
-    -- Store a direct reference to the key for collision detection
-    self.key = self.stuff:add(Key, 2, 0, -2, { angle = 0, axis = vec3(0, 1, 0) })
-    table.insert(self.solid, self.key)
-
-    -- Add a door that requires the key to open
-    self.door = self.stuff:add(Door, -3, 0, -4.25)
+    -- Add door that requires suitcase to open
+    self.door = self.stuff:add(Door, 0, 0, -4.25)
     table.insert(self.solid, self.door)
 
     self:init_eye_and_sun()
@@ -50,7 +46,7 @@ function Room2:enter()
     }
 end
 
-function Room2:init_eye_and_sun()
+function Room3:init_eye_and_sun()
     self.eye = {}
     self.eye.transform = mat4()
     self.eye.shader = graphics.new_shader(pigic.unlit_web)
@@ -64,34 +60,12 @@ function Room2:init_eye_and_sun()
     self.eye.transform:look_at(self.camera_position, self.camera_target, vec3(0, 1, 0))
 end
 
-function Room2:update(dt)
+function Room3:update(dt)
     self.player:update(dt)
     self.stuff:update(dt)
 
-    -- Check collision between player and key
-    if self.key and not self.key.picked then
-        -- Calculate distance between player and key
-        local dx = self.player.translation.x - self.key.translation.x
-        local dy = self.player.translation.y - self.key.translation.y
-        local dz = self.player.translation.z - self.key.translation.z
-        local dist = math.sqrt(dx * dx + dy * dy + dz * dz)
-
-        -- If player is close enough to key and presses interact, pick it up
-        local pickup_distance = self.player.radius + 0.5 -- player radius + small buffer
-        if dist < pickup_distance and input:pressed('interact') then
-            self.key.picked = true
-            -- Remove key from solid array so player doesn't collide with it
-            for i, solid in ipairs(self.solid) do
-                if solid == self.key then
-                    table.remove(self.solid, i)
-                    break
-                end
-            end
-        end
-    end
-
-    -- Check if player is touching door with the key
-    if self.key and self.key.picked and not self.transitioning then
+    -- Check if player is touching door with the suitcase in inventory
+    if Inventory:has('suitcase') and not self.transitioning then
         local len = collision.sphereIntersection(
             self.door,
             self.player.translation.x,
@@ -100,16 +74,16 @@ function Room2:update(dt)
             self.player.radius
         )
 
-        -- If intersecting with door, transition to room3
+        -- If intersecting with door, transition to Ending
         if len then
             self.transitioning = true
-            toolkit:switch(Room3)
+            toolkit:switch(Ending)
             return
         end
     end
 end
 
-function Room2:draw()
+function Room3:draw()
     love.graphics.setDepthMode('lequal', true)
 
     graphics.set_canvas { toolkit.canvas, depth = true }
@@ -129,7 +103,7 @@ function Room2:draw()
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
 
-    -- Display inventory contents for debugging
+    -- Display inventory contents and instruction
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print("Inventory:", 10, 10)
     local y_offset = 30
@@ -138,15 +112,37 @@ function Room2:draw()
         y_offset = y_offset + 20
     end
 
+    -- Display message about door requirement
+    if not Inventory:has('suitcase') then
+        love.graphics.setColor(1, 0.5, 0.5, 1)
+        love.graphics.printf(
+            "The door is locked. You forgot the suitcase! Game Over.",
+            0,
+            love.graphics.getHeight() - 50,
+            love.graphics.getWidth(),
+            'center'
+        )
+    else
+        love.graphics.setColor(0.5, 1, 0.5, 1)
+        love.graphics.printf(
+            "You have the suitcase! Walk to the door to proceed.",
+            0,
+            love.graphics.getHeight() - 50,
+            love.graphics.getWidth(),
+            'center'
+        )
+    end
+
     -- Display controls in top right
+    love.graphics.setColor(1, 1, 1, 1)
     local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact"
     local text_width = love.graphics.getFont():getWidth("Controls:")
     love.graphics.printf(controls_text, love.graphics.getWidth() - text_width - 150, 10, 200, 'left')
 end
 
-function Room2:exit()
+function Room3:exit()
     self.solid = {}
     self.stuff:destroy()
 end
 
-return Room2
+return Room3

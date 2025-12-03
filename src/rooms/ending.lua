@@ -12,7 +12,6 @@ function Ending:update(dt)
 end
 
 function Ending:draw()
-    local state = require "../state" -- double check
     love.graphics.setCanvas()
     love.graphics.setShader()
     love.graphics.setDepthMode("always", false)

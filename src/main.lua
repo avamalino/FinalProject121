@@ -1,4 +1,5 @@
 toolkit = require 'toolkit'
+Inventory = require 'inventory'
 
 function love.load()
     toolkit:init()

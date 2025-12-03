@@ -24,15 +24,15 @@ This actionable todo list is based on the F2 requirements and our existing code.
 
    - Implementation: `src/scenes/room1.lua` is an example scene it can be referenced for creating new scenes.
 
-3. Object Selection & Interaction [ ]
+3. Object Selection & Interaction [x]
    - Description: implement pointer/touch selection (raycast or bounding-box), visual feedback (highlight), and an action menu (Pick up / Examine).
    - Acceptance: clicking/tapping an in-scene object selects it, highlights it and shows available actions.
 
-4. Inventory System [ ]
+4. Inventory System [x]
    - Description: implement add/remove/list for items, simple UI overlay showing collected items. Keep inventory in global game state.
    - Acceptance: picking up an object adds it to inventory; inventory persists across scene changes.
 
-5. Pick-Up & Examine Actions [ ]
+5. Pick-Up & Examine Actions [x]
    - Description: implement concrete actions: picking up removes object from scene and adds it to inventory; examining shows a description panel.
    - Acceptance: items disappear from scene when picked and appear in inventory UI; examine displays details.
 
@@ -42,19 +42,19 @@ This actionable todo list is based on the F2 requirements and our existing code.
 
    - Implementation: `src/objects/sensor.lua` is a sensor that is triggered by having an object pushed on top of it. In this implementation the sensor is used to unlock a door in `src/rooms/room1.lua`.
 
-7. Skill/Reasoning-Based Mechanics [ ]
+7. Skill/Reasoning-Based Mechanics [x]
    - Description: ensure puzzle success depends on player input/skill or reasoning (timing, placement, aiming), not randomness. Provide clear success/failure conditions and allow retries.
    - Acceptance: players can fail the puzzle through incorrect actions; success must be reproducible through skillful play.
 
-8. Cross-Scene Dependency [ ]
+8. Cross-Scene Dependency [x]
    - Description: at least one inventory item changes puzzle possibilities (e.g., a crowbar from room1 opens a crate in room2). Use flags to gate interactions.
    - Acceptance: using the inventory item in the target scene changes possible actions and is necessary for a conclusive solution path.
 
-9. Endings & Outcome States [ ]
+9. Endings & Outcome States [x]
    - Description: implement at least one conclusive ending and an end screen summarizing outcome.
    - Acceptance: a playthrough can reach an ending screen and gameplay halts or shows replay options.
 
-10. Game State Persistence [ ]
+10. Game State Persistence [x]
     - Description: maintain in-memory game state across scenes
     - Acceptance: scene switches retain puzzle state, inventory and flags within a play session. (This should be inherently supported by lua and not require much work by us)
 
