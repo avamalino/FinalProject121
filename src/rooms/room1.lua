@@ -29,7 +29,8 @@ function Room1:enter()
     self.solid = {}
     self.stuff = class.holder(self)
 
-    table.insert(self.solid, self.stuff:add(Door, 3, 0, -4.25))
+    self.door = self.stuff:add(Door, 3, 0, -4.25)
+    table.insert(self.solid, self.door)
 
     self:init_eye_and_sun()
 
@@ -65,6 +66,8 @@ function Room1:init_eye_and_sun()
     -- Set up fixed angled camera position (higher, better view)
     self.camera_position = vec3(0, 12, 8) -- Higher and back for better overview
     self.camera_target = vec3(0, 0, 0)    -- Looking at room center
+    -- Fixed angled camera
+    self.eye.transform:look_at(self.camera_position, self.camera_target, vec3(0, 1, 0))
 end
 
 function Room1:update(dt)
@@ -75,30 +78,22 @@ function Room1:update(dt)
 
     -- Check if player is touching door to transition to room2
     -- Only allow transition if sensor is activated
-    if not self.transitioning and self.sensor.activated then
-        for _, obj in ipairs(self.solid) do
-            -- Check sphere intersection with this solid object
-            local len = collision.sphereIntersection(
-                obj,
-                self.player.translation.x,
-                self.player.translation.y,
-                self.player.translation.z,
-                self.player.radius
-            )
+    if self.sensor.activated and not self.transitioning then
+        local len = collision.sphereIntersection(
+            self.door,
+            self.player.translation.x,
+            self.player.translation.y,
+            self.player.translation.z,
+            self.player.radius
+        )
 
-            -- If intersecting and it's the door (at position 3, 0, -4.25), transition
-            if len and obj.translation and obj.translation.x then
-                if math.abs(obj.translation.x - 3) < 0.1 and math.abs(obj.translation.z - (-4.25)) < 0.1 then
-                    self.transitioning = true
-                    toolkit:switch(Room2)
-                    return
-                end
-            end
+        -- If intersecting with door, transition to room1
+        if len then
+            self.transitioning = true
+            toolkit:switch(Room2)
+            return
         end
     end
-
-    -- Fixed angled camera
-    self.eye.transform:look_at(self.camera_position, self.camera_target, vec3(0, 1, 0))
 end
 
 function Room1:draw()

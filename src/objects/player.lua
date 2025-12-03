@@ -7,16 +7,26 @@ function Player:new(owner, x, y, z)
     self.owner = owner
     self.movespeed = 5 -- Slower movement
     self.friction = 0
+    self.GRAVITY = 20
+    self.MAX_YVEL = 10
     self.yaw = 0
-    self.radius = 0.5 -- Collision radius
+    self.radius = 0.5           -- Collision radius
+    self.grabtransform = mat4() -- Transform for held items
 end
 
 function Player:update(dt)
     local move = vec3(0, 0, 0)
-    if love.keyboard.isDown('w') then move.z = -1 end
-    if love.keyboard.isDown('s') then move.z = 1 end
-    if love.keyboard.isDown('a') then move.x = -1 end
-    if love.keyboard.isDown('d') then move.x = 1 end
+
+    if input:down('up') then
+        move.z = -1
+    elseif input:down('down') then
+        move.z = 1
+    end
+    if input:down('left') then
+        move.x = -1
+    elseif input:down('right') then
+        move.x = 1
+    end
 
     if move:len() > 0 then
         move:normalize()
@@ -112,8 +122,14 @@ function Player:draw()
     pass.push()
     pass.translate(self.translation)
     pass.rotate(self.yaw, 0, 1, 0)
+    local transform = pass.transform:clone()
     Player.model:draw()
     pass.pop()
+
+    -- Set grab transform for held items (like the key)
+    -- Position slightly in front and to the side of the player
+    local sp = transform:clone():translate(0, 0.3, -0.8)
+    self.grabtransform:set(sp)
 end
 
 return Player

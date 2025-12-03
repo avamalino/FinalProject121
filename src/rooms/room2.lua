@@ -1,51 +1,138 @@
+local collision = require(pigic.collision)
+
 Room2 = {}
 
 function Room2:enter()
-    if toolkit and toolkit.time then
-        toolkit.time:pause()
+    if not self.camera then
+        self.camera = class.camera3d(self)
+        self.camera:add_camera('default', 0, 50, 50)
+        self.camera:set_active('default')
+        self.camera:follow_xz(0, 0)
     end
-    self.background_color = {0, 1, 0}
 
+    self.camera:set_active('default')
+
+    if not self.player then
+        self.player = require('objects.player')(self, 0, 0, 0)
+    end
+
+    self.solid = {}
+    self.stuff = class.holder(self)
+
+    -- Store a direct reference to the key for collision detection
+    self.key = self.stuff:add(Key, 2, 0, -2, { angle = 0, axis = vec3(0, 1, 0) })
+    table.insert(self.solid, self.key)
+
+    -- Add a door that requires the key to open
+    self.door = self.stuff:add(Door, -3, 0, -4.25)
+    table.insert(self.solid, self.door)
+
+    self:init_eye_and_sun()
+
+    -- Load floor model
+    self.floor_model = pigic.model('assets/obj/floor.obj', 'assets/png/palette.png')
+    local floor = { translation = vec3(0, 0, 0), collider = self.floor_model.verts }
+    floor.aabb = collision.generateAABB(floor)
+    table.insert(self.solid, floor)
+
+    -- Load wall model
+    self.wall_model = pigic.model('assets/obj/wall.obj', 'assets/png/wall-texture.png')
+    local wall = { translation = vec3(0, 0, 0), collider = self.wall_model.verts }
+    wall.aabb = collision.generateAABB(wall)
+    table.insert(self.solid, wall)
+
+    -- Store room boundaries for simple boundary checking
+    self.room_bounds = {
+        min_x = -4.5,
+        max_x = 4.5,
+        min_z = -4.5,
+        max_z = 4.5 -- Front edge boundary
+    }
 end
 
+function Room2:init_eye_and_sun()
+    self.eye = {}
+    self.eye.transform = mat4()
+    self.eye.shader = graphics.new_shader(pigic.unlit_web)
+    self.eye.projection = mat4.from_perspective(60, love.graphics.getWidth() / love.graphics.getHeight(), .01, 300)
+
+    self.eye.shader:send('projectionMatrix', 'column', self.eye.projection)
+
+    -- Set up fixed angled camera position (higher, better view)
+    self.camera_position = vec3(0, 12, 8) -- Higher and back for better overview
+    self.camera_target = vec3(0, 0, 0)    -- Looking at room center
+    self.eye.transform:look_at(self.camera_position, self.camera_target, vec3(0, 1, 0))
+end
 
 function Room2:update(dt)
+    self.player:update(dt)
+    self.stuff:update(dt)
 
+    -- Check collision between player and key
+    if self.key and not self.key.picked then
+        -- Calculate distance between player and key
+        local dx = self.player.translation.x - self.key.translation.x
+        local dy = self.player.translation.y - self.key.translation.y
+        local dz = self.player.translation.z - self.key.translation.z
+        local dist = math.sqrt(dx * dx + dy * dy + dz * dz)
+
+        -- If player is close enough to key and presses interact, pick it up
+        local pickup_distance = self.player.radius + 0.5 -- player radius + small buffer
+        if dist < pickup_distance and input:pressed('interact') then
+            self.key.picked = true
+            -- Remove key from solid array so player doesn't collide with it
+            for i, solid in ipairs(self.solid) do
+                if solid == self.key then
+                    table.remove(self.solid, i)
+                    break
+                end
+            end
+        end
+    end
+
+    -- Check if player is touching door with the key
+    if self.key and self.key.picked and not self.transitioning then
+        local len = collision.sphereIntersection(
+            self.door,
+            self.player.translation.x,
+            self.player.translation.y,
+            self.player.translation.z,
+            self.player.radius
+        )
+
+        -- If intersecting with door, transition to room1
+        if len then
+            self.transitioning = true
+            toolkit:switch(Ending)
+            return
+        end
+    end
 end
 
 function Room2:draw()
-    local state = require "../state" -- double check
-    love.graphics.setCanvas()
-    love.graphics.setShader()
-    love.graphics.setDepthMode("always", false)
+    love.graphics.setDepthMode('lequal', true)
 
-    -- green background
-    love.graphics.clear(0.596, 0.984, 0.596, 1)
-    love.graphics.setColor(0,0,0)
-    
-    local defaultFont = love.graphics.newFont(36)
-    love.graphics.setFont(defaultFont)
-    love.graphics.printf(
-        "Congrats! You Won!",
-        0,
-        love.graphics.getHeight() / 2 -50,
-        love.graphics.getWidth(),
-        'center'
-    )
+    graphics.set_canvas { toolkit.canvas, depth = true }
+    graphics.set_shader(self.eye.shader)
+    self.active_shader = self.eye.shader
+    self.eye.shader:send('viewMatrix', 'column', self.eye.transform)
 
-    love.graphics.setFont(defaultFont)
-    love.graphics.printf(
-        "Press [ESC] to Exit",
-        0,
-        love.graphics.getHeight() /2 + 50,
-        love.graphics.getWidth(),
-        'center'
-    )
-   
+    -- Draw floor and walls
+    self.floor_model:draw()
+    self.wall_model:draw()
+
+    self.stuff:draw()
+
+    -- Draw player
+    self.player:draw()
+
+    graphics.set_shader()
+    love.graphics.setDepthMode('always', false)
 end
 
 function Room2:exit()
-    toolkit.time:resume()
+    self.solid = {}
+    self.stuff:destroy()
 end
 
 return Room2

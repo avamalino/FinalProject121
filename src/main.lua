@@ -1,25 +1,32 @@
 toolkit = require 'toolkit'
--- Scene = require 'scenes.scene'
 
 function love.load()
     toolkit:init()
+
+    input:bind('w', 'up')
+    input:bind('s', 'down')
+    input:bind('a', 'left')
+    input:bind('d', 'right')
+    input:bind('up', 'up')
+    input:bind('down', 'down')
+    input:bind('right', 'right')
+    input:bind('left', 'left')
+    input:bind('space', 'interact')
+
     gamestate.init(Room1)
-    -- Scene.load()
+
+    love.window.setVSync(true)
 end
 
 function love.update(dt)
     toolkit:update(dt)
-    --Scene:update(dt)
 end
 
 function love.draw()
     toolkit:draw()
-    --Scene:draw()
 end
 
-function love.resize(w, h)
-    toolkit.resize(w, h)
-end
+function love.resize(w, h) end
 
 function recursive_enumerate(folder, t)
     local items = love.filesystem.getDirectoryItems(folder)
