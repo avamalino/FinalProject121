@@ -1,0 +1,219 @@
+* {
+  box-sizing: border-box;
+}
+
+/* ---------- DARK MODE ---------- */
+@media (prefers-color-scheme: dark) {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family:
+      arial,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+    background-color: #05070b;
+    color: rgb(214, 230, 244);
+
+    /* dark purple 3-toe paws, two staggered tilings */
+    background-image:
+            /* paw set A: big pad + 3 toes */
+      radial-gradient(
+        circle at 30px 42px,
+        rgba(140, 96, 185, 0.7) 15px,
+        transparent 16px
+      ),
+      radial-gradient(
+        circle at 12px 22px,
+        rgba(140, 96, 185, 0.7) 7px,
+        transparent 8px
+      ),
+      radial-gradient(
+        circle at 30px 16px,
+        rgba(140, 96, 185, 0.7) 7px,
+        transparent 8px
+      ),
+      radial-gradient(
+        circle at 48px 22px,
+        rgba(140, 96, 185, 0.7) 7px,
+        transparent 8px
+      ),
+      /* paw set B (offset, slightly varied) */
+        radial-gradient(
+          circle at 34px 42px,
+          rgba(140, 96, 185, 0.6) 15px,
+          transparent 16px
+        ),
+      radial-gradient(
+        circle at 15px 22px,
+        rgba(140, 96, 185, 0.6) 7px,
+        transparent 8px
+      ),
+      radial-gradient(
+        circle at 34px 19px,
+        rgba(140, 96, 185, 0.6) 7px,
+        transparent 8px
+      ),
+      radial-gradient(
+        circle at 53px 22px,
+        rgba(140, 96, 185, 0.6) 7px,
+        transparent 8px
+      );
+    background-size:
+      190px 190px,
+      190px 190px,
+      190px 190px,
+      190px 190px,
+      230px 230px,
+      230px 230px,
+      230px 230px,
+      230px 230px;
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      80px 60px,
+      80px 60px,
+      80px 60px,
+      80px 60px;
+  }
+
+  h1 {
+    font-family: arial, system-ui, sans-serif;
+    margin: 0;
+    padding: 18px 24px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgb(219, 239, 255);
+    background-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* ---------- LIGHT MODE ---------- */
+@media (prefers-color-scheme: light) {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family:
+      arial,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+    background-color: rgb(166, 200, 223); /* same blue on sides + behind game */
+    color: rgb(34, 26, 30);
+
+    /* light yellow + blue 3-toe paws, spaced + staggered */
+    background-image:
+            /* paw set A */
+      radial-gradient(
+        circle at 30px 42px,
+        rgba(255, 248, 186, 0.9) 15px,
+        transparent 16px
+      ),
+      radial-gradient(
+        circle at 12px 22px,
+        rgba(255, 248, 186, 0.9) 7px,
+        transparent 8px
+      ),
+      radial-gradient(
+        circle at 30px 16px,
+        rgba(255, 248, 186, 0.9) 7px,
+        transparent 8px
+      ),
+      radial-gradient(
+        circle at 48px 22px,
+        rgba(255, 248, 186, 0.9) 7px,
+        transparent 8px
+      ),
+      /* paw set B */
+        radial-gradient(
+          circle at 34px 44px,
+          rgba(255, 248, 186, 0.8) 15px,
+          transparent 16px
+        ),
+      radial-gradient(
+        circle at 15px 22px,
+        rgba(255, 248, 186, 0.9) 7px,
+        transparent 8px
+      ),
+      radial-gradient(
+        circle at 34px 18px,
+        rgba(255, 248, 186, 0.9) 7px,
+        transparent 8px
+      ),
+      radial-gradient(
+        circle at 53px 22px,
+        rgba(255, 248, 186, 0.9) 7px,
+        transparent 8px
+      );
+    background-size:
+      190px 190px,
+      190px 190px,
+      190px 190px,
+      190px 190px,
+      230px 230px,
+      230px 230px,
+      230px 230px,
+      230px 230px;
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      80px 60px,
+      80px 60px,
+      80px 60px,
+      80px 60px;
+  }
+
+  h1 {
+    font-family: arial, system-ui, sans-serif;
+    margin: 0;
+    padding: 18px 24px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgb(11, 86, 117);
+    background-color: transparent;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* Footer */
+footer {
+  font-family: arial, system-ui, sans-serif;
+  font-size: 12px;
+  padding-left: 10px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+}
+a:link {
+  color: rgb(233, 73, 154);
+}
+a:visited {
+  color: rgb(110, 30, 71);
+}
+a:hover {
+  color: rgb(252, 207, 230);
+}
+
+/* DO NOT TOUCH: canvas settings for correct mouse coords */
+#canvas {
+  padding-right: 0;
+  display: block;
+  border: 0px none;
+  visibility: hidden;
+}
