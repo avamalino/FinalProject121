@@ -1,0 +1,49 @@
+/* Base page layout */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Frame around the game canvas */
+#frame {
+  background-color: #000000; /* stays black; game fills inside */
+  padding: 0;
+}
+
+/* Canvas sizing */
+canvas#canvas {
+  display: block;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+/* Simple loading text (hidden once love.js starts) */
+.loading {
+  color: #ffffff;
+  text-align: center;
+  padding: 8px;
+}
+
+/* Light / dark based on system/browser preference */
+html[data-theme="light"] body {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+html[data-theme="dark"] body {
+  background-color: #050816;
+  color: #f9fafb;
+}

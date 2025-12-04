@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cat Game (Web)</title>
+    <link rel="stylesheet" href="/theme.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <!-- Apply system / browser light–dark behavior -->
+    <script src="/theme.js"></script>
+
+    <!-- Black frame that reacts to light/dark via CSS -->
+    <div id="frame">
+      <!-- THIS is the love.js canvas. No display:none. -->
+      <canvas id="canvas"></canvas>
+
+      <!-- Simple loader text while the game boots -->
+      <div id="spinner" class="loading">Loading cat game…</div>
+    </div>
+
+    <!-- love.js runtime (from 2dengine zip you dropped in public/lovejs) -->
+    <script src="/lovejs/11.5/release/love.js"></script>
+
+    <!-- love.js player, pointing at your catgame.love in public/lovejs -->
+    <script src="/lovejs/player.js?g=catgame.love&n=1"></script>
+  </body>
+</html>

@@ -1,11 +1,16 @@
-const { defineConfig } = require("vite");
-const path = require("path");
+import { defineConfig } from "vite";
 
-module.exports = defineConfig({
-  root: path.resolve(__dirname, "web"),
-  base: "./",
+export default defineConfig({
+  root: ".",
   server: {
     port: 5183,
-    strictPort: true,
+    open: false,
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
+    },
+  },
+  build: {
+    outDir: "dist",
   },
 });

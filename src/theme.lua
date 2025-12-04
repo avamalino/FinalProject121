@@ -1,169 +1,156 @@
 -- src/theme.lua
--- Simple light/dark theme manager + toggle button for Cat Game
 
-local Theme = {}
-
--- Theme definitions
-Theme.modes = {
-  light = {
-    name = "light",
-    -- soft warm wash so it still feels bright
-    overlay = {1.0, 0.98, 0.9, 0.12},
-  },
-  dark = {
-    name = "dark",
-    -- dark purple transparent overlay for night mode
-    overlay = {0.16, 0.05, 0.27, 0.30},
-  },
+-- Single shared table; we alias it as both `theme` and `Theme`
+local theme = {
+    mode        = "light",  -- "light" or "dark"
+    night_alpha = 0.18,     -- how strong the night tint is (0.10–0.25 is nice)
+    button      = nil,      -- UI toggle button rect
 }
 
-Theme.currentName = "light"
-Theme.current     = Theme.modes.light
+local Theme = theme -- alias so code can use either `theme` or `Theme`
 
--- Button layout (we keep it in the top-right)
-Theme.button = {
-  x = 0,
-  y = 0,
-  w = 84,
-  h = 34,
-  margin = 16,
-}
+---------------------------------------------------------------------
+-- Mode helpers
+---------------------------------------------------------------------
 
--- --- host environment detection -----------------------------------------
--- We treat an environment variable called DARK_MODE as the host preference.
--- If your shell / OS launcher exports DARK_MODE=dark, the game starts in dark.
-local function detectHostPreference()
-  local env = os.getenv("DARK_MODE")
-  if not env then
-    return "light"
-  end
-  env = env:lower()
-  if env == "1" or env == "true" or env == "dark" then
-    return "dark"
-  end
-  return "light"
+function theme.isDark()
+    return theme.mode == "dark"
 end
 
-function Theme.init()
-  local initial = detectHostPreference()
-  Theme.setMode(initial)
-  Theme.onResize(love.graphics.getWidth(), love.graphics.getHeight())
+function theme.setLight()
+    theme.mode = "light"
 end
 
-function Theme.setMode(name)
-  if Theme.modes[name] then
-    Theme.currentName = name
-    Theme.current     = Theme.modes[name]
-  end
+function theme.setDark()
+    theme.mode = "dark"
 end
 
-function Theme.toggle()
-  if Theme.currentName == "light" then
-    Theme.setMode("dark")
-  else
-    Theme.setMode("light")
-  end
+function theme.toggle()
+    if theme.isDark() then
+        theme.setLight()
+    else
+        theme.setDark()
+    end
 end
 
-function Theme.isDark()
-  return Theme.currentName == "dark"
+---------------------------------------------------------------------
+-- Room tint (applied over 3D scene, *not* over UI)
+---------------------------------------------------------------------
+
+function theme.applyRoomTint()
+    if not theme.isDark() then
+        -- day: no tint, just ensure color is reset
+        love.graphics.setColor(1, 1, 1, 1)
+        return
+    end
+
+    local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+    -- very soft purple overlay, fairly transparent
+    love.graphics.setColor(0.10, 0.03, 0.22, theme.night_alpha)
+    love.graphics.rectangle("fill", 0, 0, w, h)
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
--- keep the button snug in the top-right when window size changes
-function Theme.onResize(w, h)
-  local b = Theme.button
-  b.x = w - b.w - b.margin
-  b.y = b.margin
+-- Backwards-compat for main.lua: it calls Theme.drawOverlay()
+function theme.drawOverlay()
+    theme.applyRoomTint()
 end
 
--- ---- global day/night tint ---------------------------------------------
+---------------------------------------------------------------------
+-- Text color (UI labels, inventory text, etc.)
+---------------------------------------------------------------------
 
--- Call this AFTER drawing the game / UI, but BEFORE drawing the toggle button,
--- so the rooms+inventory get tinted but the button stays crisp.
-function Theme.drawOverlay()
-  local overlay = Theme.current.overlay
-  if not overlay or overlay[4] <= 0 then return end
-
-  local w, h = love.graphics.getWidth(), love.graphics.getHeight()
-
-  love.graphics.push("all")
-  love.graphics.setBlendMode("multiply", "premultiplied")
-  love.graphics.setColor(overlay)
-  love.graphics.rectangle("fill", 0, 0, w, h)
-  love.graphics.pop()
+function theme.getTextColor()
+    if theme.isDark() then
+        return 1, 1, 1, 0.95  -- almost-white text for dark mode
+    else
+        return 0, 0, 0, 0.95  -- almost-black text for light mode
+    end
 end
 
--- ---- button helpers ----------------------------------------------------
+---------------------------------------------------------------------
+-- Toggle button UI (sun / moon switch in top-right)
+---------------------------------------------------------------------
 
-local function pointInRect(px, py, x, y, w, h)
-  return px >= x and px <= x + w and py >= y and py <= y + h
+-- Compute button rect based on window size
+function theme.init()
+    local margin = 24
+    local w, h   = 96, 32
+    local sw     = love.graphics.getWidth()
+
+    theme.button = {
+        x      = sw - w - margin,
+        y      = margin,
+        w      = w,
+        h      = h,
+        radius = h / 2,
+    }
 end
 
--- Returns true if this click was used by the theme button
-function Theme.mousepressed(mx, my, button)
-  if button ~= 1 then return false end
-
-  local b = Theme.button
-  if not pointInRect(mx, my, b.x, b.y, b.w, b.h) then
-    return false
-  end
-
-  local midX = b.x + b.w / 2
-  if mx < midX then
-    Theme.setMode("light")
-  else
-    Theme.setMode("dark")
-  end
-  return true
+local function ensureButton()
+    if not theme.button then
+        theme.init()
+    end
+    return theme.button
 end
 
--- Draw the sun/moon toggle in the corner
-function Theme.drawToggle()
-  local b     = Theme.button
-  local midX  = b.x + b.w / 2
-  local cY    = b.y + b.h / 2
+-- Draw the sun/moon toggle pill
+function theme.drawToggle()
+    local btn = ensureButton()
+    local x, y, w, h, r = btn.x, btn.y, btn.w, btn.h, btn.radius
 
-  love.graphics.push("all")
+    -- Track background
+    if theme.isDark() then
+        love.graphics.setColor(0.16, 0.16, 0.24, 0.9)
+    else
+        love.graphics.setColor(0.92, 0.88, 0.70, 0.9)
+    end
+    love.graphics.rectangle("fill", x, y, w, h, r, r)
 
-  -- card background
-  love.graphics.setColor(0, 0, 0, 0.55)
-  love.graphics.rectangle("fill", b.x, b.y, b.w, b.h, 8, 8)
+    -- Border
+    love.graphics.setColor(0, 0, 0, 0.7)
+    love.graphics.rectangle("line", x, y, w, h, r, r)
 
-  -- highlight active half
-  love.graphics.setColor(1, 1, 1, 0.18)
-  if Theme.currentName == "light" then
-    love.graphics.rectangle("fill", b.x + 2, b.y + 2, b.w / 2 - 4, b.h - 4, 6, 6)
-  else
-    love.graphics.rectangle("fill", midX + 2, b.y + 2, b.w / 2 - 4, b.h - 4, 6, 6)
-  end
+    -- Knob
+    local knob_margin = 4
+    local knob_r      = h / 2 - knob_margin
+    local knob_y      = y + h / 2
+    local knob_x
 
-  -- divider
-  love.graphics.setColor(1, 1, 1, 0.35)
-  love.graphics.setLineWidth(1)
-  love.graphics.line(midX, b.y + 4, midX, b.y + b.h - 4)
+    if theme.isDark() then
+        knob_x = x + w - knob_r - knob_margin
+    else
+        knob_x = x + knob_r + knob_margin
+    end
 
-  -- SUN (left)
-  local sunX = b.x + b.w * 0.25
-  love.graphics.setColor(1.0, 0.9, 0.2, 1)
-  love.graphics.circle("fill", sunX, cY, 7)
-  love.graphics.setLineWidth(1)
-  for i = 1, 8 do
-    local a = i * (math.pi / 4)
-    local cx, cy = math.cos(a), math.sin(a)
-    love.graphics.line(
-      sunX + cx * 10, cY + cy * 10,
-      sunX + cx * 13, cY + cy * 13
-    )
-  end
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.circle("fill", knob_x, knob_y, knob_r)
 
-  -- MOON (right)
-  local moonX = b.x + b.w * 0.75
-  love.graphics.setColor(0.8, 0.8, 1.0, 1)
-  love.graphics.circle("fill", moonX, cY, 7)
-  love.graphics.setColor(0, 0, 0, 1)
-  love.graphics.circle("fill", moonX + 3, cY - 2, 7)
+    -- Simple sun icon on the left
+    local sun_x = x + h / 2
+    love.graphics.setColor(1, 0.85, 0.25, 1)
+    love.graphics.circle("fill", sun_x, knob_y, 5)
 
-  love.graphics.pop()
+    -- Simple moon icon on the right
+    local moon_x = x + w - h / 2
+    love.graphics.setColor(0.7, 0.8, 1.0, 1)
+    love.graphics.circle("fill", moon_x, knob_y, 5)
 end
 
-return Theme
+-- Handle clicks on the toggle
+function theme.mousepressed(mx, my, button)
+    if button ~= 1 then return end
+    local btn = ensureButton()
+    if mx >= btn.x and mx <= btn.x + btn.w and
+       my >= btn.y and my <= btn.y + btn.h then
+        theme.toggle()
+    end
+end
+
+-- If you resize the window, re-anchor the toggle
+function theme.resize(w, h)
+    theme.init()
+end
+
+---------------------------------------------------------------------
+return theme

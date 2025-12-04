@@ -1,14 +1,15 @@
+local theme = require('theme')
+
 Ending = {}
 
 function Ending:enter()
     if toolkit and toolkit.time then
         toolkit.time:pause()
     end
-    self.background_color = { 0, 1, 0 }
+    self.background_color = { 0.596, 0.984, 0.596 } -- soft green
 end
 
 function Ending:update(dt)
-
 end
 
 function Ending:draw()
@@ -16,9 +17,11 @@ function Ending:draw()
     love.graphics.setShader()
     love.graphics.setDepthMode("always", false)
 
-    -- green background
-    love.graphics.clear(0.596, 0.984, 0.596, 1)
-    love.graphics.setColor(0, 0, 0)
+    -- background
+    love.graphics.clear(self.background_color[1], self.background_color[2], self.background_color[3], 1)
+
+    local r, g, b, a = theme.getTextColor()
+    love.graphics.setColor(r, g, b, a)
 
     local defaultFont = love.graphics.newFont(36)
     love.graphics.setFont(defaultFont)
@@ -30,7 +33,6 @@ function Ending:draw()
         'center'
     )
 
-    love.graphics.setFont(defaultFont)
     love.graphics.printf(
         "Press [ESC] to Exit",
         0,
@@ -38,6 +40,8 @@ function Ending:draw()
         love.graphics.getWidth(),
         'center'
     )
+
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 function Ending:exit()

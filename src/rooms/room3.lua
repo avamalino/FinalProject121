@@ -1,4 +1,5 @@
 local collision = require(pigic.collision)
+local theme     = require('theme')    
 
 Room3 = {}
 
@@ -19,25 +20,21 @@ function Room3:enter()
     self.solid = {}
     self.stuff = class.holder(self)
 
-    -- Add door that requires suitcase to open
     self.door = self.stuff:add(Door, 0, 0, -4.25)
     table.insert(self.solid, self.door)
 
     self:init_eye_and_sun()
 
-    -- Load floor model
     self.floor_model = pigic.model('assets/obj/floor.obj', 'assets/png/palette.png')
     local floor = { translation = vec3(0, 0, 0), collider = self.floor_model.verts }
     floor.aabb = collision.generateAABB(floor)
     table.insert(self.solid, floor)
 
-    -- Load wall model
     self.wall_model = pigic.model('assets/obj/wall.obj', 'assets/png/wall-texture.png')
     local wall = { translation = vec3(0, 0, 0), collider = self.wall_model.verts }
     wall.aabb = collision.generateAABB(wall)
     table.insert(self.solid, wall)
 
-    -- Store room boundaries for simple boundary checking
     self.room_bounds = {
         min_x = -4.5,
         max_x = 4.5,
@@ -54,9 +51,8 @@ function Room3:init_eye_and_sun()
 
     self.eye.shader:send('projectionMatrix', 'column', self.eye.projection)
 
-    -- Set up fixed angled camera position (higher, better view)
     self.camera_position = vec3(0, 12, 8) -- Higher and back for better overview
-    self.camera_target = vec3(0, 0, 0)    -- Looking at room center
+    self.camera_target = vec3(0, 0, 0)    
     self.eye.transform:look_at(self.camera_position, self.camera_target, vec3(0, 1, 0))
 end
 
@@ -64,7 +60,6 @@ function Room3:update(dt)
     self.player:update(dt)
     self.stuff:update(dt)
 
-    -- Check if player is touching door with the suitcase in inventory
     if Inventory:has('suitcase') and not self.transitioning then
         local len = collision.sphereIntersection(
             self.door,
@@ -74,7 +69,6 @@ function Room3:update(dt)
             self.player.radius
         )
 
-        -- If intersecting with door, transition to Ending
         if len then
             self.transitioning = true
             toolkit:switch(Ending)
@@ -91,20 +85,20 @@ function Room3:draw()
     self.active_shader = self.eye.shader
     self.eye.shader:send('viewMatrix', 'column', self.eye.transform)
 
-    -- Draw floor and walls
     self.floor_model:draw()
     self.wall_model:draw()
 
     self.stuff:draw()
 
-    -- Draw player
     self.player:draw()
 
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
 
-    -- Display inventory contents and instruction
-    love.graphics.setColor(1, 1, 1, 1)
+    theme.applyRoomTint()
+
+    local r, g, b, a = theme.getTextColor()
+    love.graphics.setColor(r, g, b, a)
     love.graphics.print("Inventory:", 10, 10)
     local y_offset = 30
     for i, item in ipairs(Inventory.items) do
@@ -112,7 +106,6 @@ function Room3:draw()
         y_offset = y_offset + 20
     end
 
-    -- Display message about door requirement
     if not Inventory:has('suitcase') then
         love.graphics.setColor(1, 0.5, 0.5, 1)
         love.graphics.printf(
@@ -133,11 +126,13 @@ function Room3:draw()
         )
     end
 
-    -- Display controls in top right
-    love.graphics.setColor(1, 1, 1, 1)
+    r, g, b, a = theme.getTextColor()
+    love.graphics.setColor(r, g, b, a)
     local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact"
     local text_width = love.graphics.getFont():getWidth("Controls:")
     love.graphics.printf(controls_text, love.graphics.getWidth() - text_width - 150, 10, 200, 'left')
+
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 function Room3:exit()

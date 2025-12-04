@@ -1,6 +1,6 @@
 toolkit = require 'toolkit'
 Inventory = require 'inventory'
-local Theme = require("theme")
+Theme = require("theme")
 
 
 function love.load()

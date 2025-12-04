@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cat Game 🐱 Web</title>
+    <link rel="stylesheet" href="/theme.css" />
+  </head>
+  <body>
+    <!-- system / browser light–dark behavior -->
+    <script src="/theme.js"></script>
+
+    <!-- simple frame + loading text -->
+    <div id="frame">
+      <div id="spinner" class="loading">Loading cat game...</div>
+    </div>
+
+    <!-- local love.js runtime (from public/lovejs) -->
+    <script src="/lovejs/love.js"></script>
+
+    <!-- local 2dengine player: loads catgame.love from /lovejs -->
+    <script src="/lovejs/player.js?g=catgame.love&n=1"></script>
+  </body>
+</html>
