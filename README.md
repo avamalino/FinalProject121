@@ -101,3 +101,4 @@ https://docs.google.com/document/d/15QVUmpRaRoGL1ZKW5EPcRfyNcnPTTqPUxD0KDNOgr8Y/
 ## Credits
 
 Cat model, Wall model, Floor model, Wall texture, and toolkit: https://sacemakesgame.itch.io/plan-meow
+Custom Font: https://www.dafont.com/super-croissant.font
