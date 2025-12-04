@@ -131,17 +131,17 @@ function Room2:draw()
 
     -- Display inventory contents for debugging
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print("Inventory:", 10, 10)
+    love.graphics.print("Inventory:",specialFont, 10, 10, 0, 0.5, 0.5)
     local y_offset = 30
     for i, item in ipairs(Inventory.items) do
-        love.graphics.print("- " .. item, 10, y_offset)
+        love.graphics.print("- " .. item,specialFont, 10, y_offset, 0, 0.5, 0.5)
         y_offset = y_offset + 20
     end
 
     -- Display controls in top right
     local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact"
     local text_width = love.graphics.getFont():getWidth("Controls:")
-    love.graphics.printf(controls_text, love.graphics.getWidth() - text_width - 150, 10, 200, 'left')
+    love.graphics.printf(controls_text, specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
 end
 
 function Room2:exit()

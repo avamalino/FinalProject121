@@ -20,8 +20,7 @@ function Ending:draw()
     love.graphics.clear(0.596, 0.984, 0.596, 1)
     love.graphics.setColor(0, 0, 0)
 
-    local defaultFont = love.graphics.newFont(36)
-    love.graphics.setFont(defaultFont)
+    love.graphics.setFont(specialFont)
     love.graphics.printf(
         "Congrats! You Won!",
         0,
@@ -30,7 +29,7 @@ function Ending:draw()
         'center'
     )
 
-    love.graphics.setFont(defaultFont)
+    love.graphics.setFont(specialFont)
     love.graphics.printf(
         "Press [ESC] to Exit",
         0,

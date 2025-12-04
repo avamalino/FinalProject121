@@ -105,10 +105,10 @@ function Room3:draw()
 
     -- Display inventory contents and instruction
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print("Inventory:", 10, 10)
+    love.graphics.print("Inventory:",specialFont, 10, 10, 0, 0.5, 0.5)
     local y_offset = 30
     for i, item in ipairs(Inventory.items) do
-        love.graphics.print("- " .. item, 10, y_offset)
+        love.graphics.print("- " .. item,specialFont, 10, y_offset, 0, 0.5, 0.5)
         y_offset = y_offset + 20
     end
 
@@ -117,6 +117,7 @@ function Room3:draw()
         love.graphics.setColor(1, 0.5, 0.5, 1)
         love.graphics.printf(
             "The door is locked. You forgot the suitcase! Game Over.",
+            specialFont,
             0,
             love.graphics.getHeight() - 50,
             love.graphics.getWidth(),
@@ -126,6 +127,7 @@ function Room3:draw()
         love.graphics.setColor(0.5, 1, 0.5, 1)
         love.graphics.printf(
             "You have the suitcase! Walk to the door to proceed.",
+            specialFont,
             0,
             love.graphics.getHeight() - 50,
             love.graphics.getWidth(),
@@ -137,7 +139,7 @@ function Room3:draw()
     love.graphics.setColor(1, 1, 1, 1)
     local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact"
     local text_width = love.graphics.getFont():getWidth("Controls:")
-    love.graphics.printf(controls_text, love.graphics.getWidth() - text_width - 150, 10, 200, 'left')
+    love.graphics.printf(controls_text, specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
 end
 
 function Room3:exit()
