@@ -39,7 +39,7 @@ jobs:
         run: npm install --no-save love.js
 
       - name: Build web package with love.js
-        run: npx love.js -c -t SquareTest game.love web
+        run: npx love.js -c -t "Campus Cat Express" game.love web
 
       - name: Ensure web contains game.love fallback
         run: |
