@@ -5,11 +5,13 @@ const fs = require("fs");
 
 const root = process.cwd();
 const srcPath = path.join(root, "src");
-const gameName = "SquareTest";
+const gameName = "Campus Cat Express";
 const gameZip = path.join(root, "game.zip");
 const gameLove = path.join(root, "game.love");
 const webDir = path.join(root, "web");
 const webGameLove = path.join(webDir, "game.love");
+const buildLoveCss = path.join(root, "build", "love.css");
+const webThemeLoveCss = path.join(webDir, "theme", "love.css");
 
 function runSync(cmd, args, opts = {}) {
   console.log("> " + [cmd].concat(args || []).join(" "));
@@ -75,6 +77,16 @@ function buildOnce() {
     fs.copyFileSync(gameLove, webGameLove);
   } catch (e) {
     console.warn("Could not copy game.love into web/ (ignored):", e.message);
+  }
+  try {
+    fs.mkdirSync(path.join(webDir, "theme"), { recursive: true });
+    fs.copyFileSync(buildLoveCss, webThemeLoveCss);
+    console.log("Copied love.css from build/ to web/theme/");
+  } catch (e) {
+    console.warn(
+      "Could not copy love.css into web/theme/ (ignored):",
+      e.message,
+    );
   }
   console.log("Build complete.");
 }

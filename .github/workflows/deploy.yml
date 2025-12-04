@@ -46,6 +46,11 @@ jobs:
           mkdir -p web
           cp -f game.love web/game.love || true
 
+      - name: Copy love.css from build to web/theme
+        run: |
+          mkdir -p web/theme
+          cp -f build/love.css web/theme/love.css || true
+
       - name: Show web contents
         run: ls -la web || true
 
