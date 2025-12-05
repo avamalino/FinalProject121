@@ -1,5 +1,6 @@
 toolkit = require 'toolkit'
 Inventory = require 'inventory'
+UndoStack = require 'undo-stack'
 
 function love.load()
     toolkit:init()
@@ -13,6 +14,7 @@ function love.load()
     input:bind('right', 'right')
     input:bind('left', 'left')
     input:bind('space', 'interact')
+    input:bind('z', 'undo')
 
     gamestate.init(Room1)
 

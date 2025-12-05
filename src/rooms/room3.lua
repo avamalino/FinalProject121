@@ -3,6 +3,11 @@ local collision = require(pigic.collision)
 Room3 = {}
 
 function Room3:enter()
+    -- Reset transition flag to allow new transitions
+    self.transitioning = false
+    -- Set door cooldown to prevent immediate re-entry after undo
+    self.door_cooldown = 4
+
     if not self.camera then
         self.camera = class.camera3d(self)
         self.camera:add_camera('default', 0, 50, 50)
@@ -61,11 +66,22 @@ function Room3:init_eye_and_sun()
 end
 
 function Room3:update(dt)
+    -- Handle undo action
+    if input:pressed('undo') then
+        UndoStack:undo()
+        return
+    end
+
+    -- Decrement door cooldown timer
+    if self.door_cooldown and self.door_cooldown > 0 then
+        self.door_cooldown = self.door_cooldown - dt
+    end
+
     self.player:update(dt)
     self.stuff:update(dt)
 
     -- Check if player is touching door with the suitcase in inventory
-    if Inventory:has('suitcase') and not self.transitioning then
+    if Inventory:has('suitcase') and not self.transitioning and (not self.door_cooldown or self.door_cooldown <= 0) then
         local len = collision.sphereIntersection(
             self.door,
             self.player.translation.x,
@@ -76,6 +92,13 @@ function Room3:update(dt)
 
         -- If intersecting with door, transition to Ending
         if len then
+            -- Track room transition in undo stack
+            UndoStack:push({
+                type = 'room_transition',
+                from_room = Room3,
+                to_room = Ending
+            })
+
             self.transitioning = true
             toolkit:switch(Ending)
             return
@@ -116,7 +139,7 @@ function Room3:draw()
     if not Inventory:has('suitcase') then
         love.graphics.setColor(1, 0.5, 0.5, 1)
         love.graphics.printf(
-            "The door is locked. You forgot the suitcase! Game Over.",
+            "The door is locked. You forgot the suitcase! Return to the first room.",
             specialFont,
             0,
             love.graphics.getHeight() - 50,
@@ -137,7 +160,7 @@ function Room3:draw()
 
     -- Display controls in top right
     love.graphics.setColor(1, 1, 1, 1)
-    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact"
+    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact\nZ - Undo"
     local text_width = love.graphics.getFont():getWidth("Controls:")
     love.graphics.printf(controls_text, specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
 end
