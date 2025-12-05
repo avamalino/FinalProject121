@@ -1,4 +1,5 @@
 local collision = require(pigic.collision)
+--local joystick = require('joystick_manager')
 
 Room1 = {}
 
@@ -26,6 +27,12 @@ function Room1:enter()
         self.sensor = require('objects.sensor')(self, -3, 0, -3.75) -- Put sensor in middle of room
     end
 
+    --if not self.touchJoystick then
+    --    local TJ = require('objects.touchJoystick')
+    --    self.touchJoystick = TJ:new()
+    --    self.touchJoystick:load()
+    --end
+
     self.solid = {}
     self.stuff = class.holder(self)
 
@@ -37,6 +44,11 @@ function Room1:enter()
     table.insert(self.solid, self.suitcase)
 
     self:init_eye_and_sun()
+
+    --joystick attempt from https://www.youtube.com/watch?v=iT7UCzWByGo
+    --local joy = self.touchJoystick.joystick
+    --moveX = joy.sensing.motion.x()
+    --moveZ = joy.sensing.motion.y()
 
     -- Load floor model
     self.floor_model = pigic.model('assets/obj/floor.obj', 'assets/png/palette.png')
@@ -79,6 +91,16 @@ function Room1:update(dt)
     self.pushable:update(dt)
     self.sensor:update(dt)
     self.stuff:update(dt)
+    --self.touchJoystick:update(dt)
+
+    --self.touchJoystick:update(dt)
+    --local joy = self.touchJoystick.joystick
+    --local joystick = require('objects.touchJoystick')
+    Joystick:update(dt)
+    moveX = Joystick.joystick.sensing.motion.x() 
+    moveZ = Joystick.joystick.sensing.motion.y()
+    self.player:moveWithJoystick(moveX,moveZ)
+
 
     -- Check if player can pick up suitcase
     if self.suitcase and not self.suitcase.collected then
@@ -149,6 +171,10 @@ function Room1:draw()
 
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
+
+    --draw joystick
+    --local joystick = require('objects.touchJoystick')
+    Joystick:draw()
 
     -- Display inventory contents
     love.graphics.setColor(1, 1, 1, 1)

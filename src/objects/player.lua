@@ -1,6 +1,7 @@
 local Player = class.vehicle3d:extend()
 
 Player.model = pigic.model('assets/obj/cat.obj', 'assets/png/cat.png')
+j = {}
 
 function Player:new(owner, x, y, z)
     Player.super.new(self, x, y, z)
@@ -15,7 +16,7 @@ function Player:new(owner, x, y, z)
 end
 
 function Player:update(dt)
-    local move = vec3(0, 0, 0)
+    move = vec3(0, 0, 0)
 
     if input:down('up') then
         move.z = -1
@@ -44,6 +45,15 @@ function Player:update(dt)
 
     -- Check collision with walls and floor
     self:check_collision()
+end
+
+function Player:moveWithJoystick(moveX,moveZ)
+    local move = vec3(moveX,0,moveZ)
+    if move:len() > 0 then
+        move:normalize()
+        self.yaw = math.atan2(move.x,move.z)
+        self:apply_force(move)
+    end
 end
 
 function Player:check_collision()

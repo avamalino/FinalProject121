@@ -64,6 +64,12 @@ function Room3:update(dt)
     self.player:update(dt)
     self.stuff:update(dt)
 
+    --local joystick = require('objects.touchJoystick')
+    Joystick:update(dt)
+    moveX = Joystick.joystick.sensing.motion.x() 
+    moveZ = Joystick.joystick.sensing.motion.y()
+    self.player:moveWithJoystick(moveX,moveZ)
+
     -- Check if player is touching door with the suitcase in inventory
     if Inventory:has('suitcase') and not self.transitioning then
         local len = collision.sphereIntersection(
@@ -99,6 +105,9 @@ function Room3:draw()
 
     -- Draw player
     self.player:draw()
+
+    --local joystick = require('objects.touchJoystick')
+    Joystick:draw()
 
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
