@@ -14,12 +14,10 @@ function love.load()
     input:bind('right', 'right')
     input:bind('left', 'left')
     input:bind('space', 'interact')
-<<<<<<< HEAD
-    Joystick = require('objects.touchJoystick')
-=======
     input:bind('z', 'undo')
 
->>>>>>> refs/remotes/origin/main
+    
+    Joystick = require('objects.touchJoystick')
     gamestate.init(Room1)
 
     love.window.setVSync(true)
