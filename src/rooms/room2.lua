@@ -174,10 +174,11 @@ function Room2:draw()
     self.player:draw()
 
     --local joystick = require('objects.touchJoystick')
-    Joystick:draw()
 
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
+
+    Joystick:draw()
 
     -- Display inventory contents for debugging
     love.graphics.setColor(1, 1, 1, 1)
