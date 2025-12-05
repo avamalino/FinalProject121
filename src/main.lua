@@ -1,5 +1,6 @@
 toolkit = require 'toolkit'
 Inventory = require 'inventory'
+UndoStack = require 'undo-stack'
 
 function love.load()
     toolkit:init()
@@ -13,7 +14,12 @@ function love.load()
     input:bind('right', 'right')
     input:bind('left', 'left')
     input:bind('space', 'interact')
+<<<<<<< HEAD
     Joystick = require('objects.touchJoystick')
+=======
+    input:bind('z', 'undo')
+
+>>>>>>> refs/remotes/origin/main
     gamestate.init(Room1)
 
     love.window.setVSync(true)

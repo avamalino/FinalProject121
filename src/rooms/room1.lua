@@ -4,6 +4,11 @@ local collision = require(pigic.collision)
 Room1 = {}
 
 function Room1:enter()
+    -- Reset transition flag to allow new transitions
+    self.transitioning = false
+    -- Set door cooldown to prevent immediate re-entry after undo
+    self.door_cooldown = 4
+
     if not self.camera then
         self.camera = class.camera3d(self)
         self.camera:add_camera('default', 0, 50, 50)
@@ -40,8 +45,15 @@ function Room1:enter()
     table.insert(self.solid, self.door)
 
     -- Add suitcase to inventory puzzle
+    -- Preserve collected state if it was already set
+    local was_collected = self.suitcase and self.suitcase.collected
     self.suitcase = self.stuff:add(Suitcase, -2, 0, 2, { angle = 0, axis = vec3(0, 1, 0) })
-    table.insert(self.solid, self.suitcase)
+    -- Restore collected state or check inventory
+    if was_collected or Inventory:has('suitcase') then
+        self.suitcase.collected = true
+    else
+        table.insert(self.solid, self.suitcase)
+    end
 
     self:init_eye_and_sun()
 
@@ -87,6 +99,17 @@ function Room1:init_eye_and_sun()
 end
 
 function Room1:update(dt)
+    -- Handle undo action
+    if input:pressed('undo') then
+        UndoStack:undo()
+        return
+    end
+
+    -- Decrement door cooldown timer
+    if self.door_cooldown and self.door_cooldown > 0 then
+        self.door_cooldown = self.door_cooldown - dt
+    end
+
     self.player:update(dt)
     self.pushable:update(dt)
     self.sensor:update(dt)
@@ -113,6 +136,17 @@ function Room1:update(dt)
         -- If player is close enough and presses interact, pick it up
         local pickup_distance = self.player.radius + 1.5
         if dist < pickup_distance and input:pressed('interact') then
+            -- Track item pickup in undo stack
+            UndoStack:push({
+                type = 'item_pickup',
+                item_type = 'suitcase',
+                position = vec3(self.suitcase.translation.x, self.suitcase.translation.y, self.suitcase.translation.z),
+                rotation = {
+                    angle = self.suitcase.rotation.angle,
+                    axis = vec3(self.suitcase.rotation.axis.x, self.suitcase.rotation.axis.y, self.suitcase.rotation.axis.z)
+                }
+            })
+
             self.suitcase.collected = true
             -- Add to global inventory
             Inventory:add('suitcase')
@@ -128,7 +162,7 @@ function Room1:update(dt)
 
     -- Check if player is touching door to transition to room2
     -- Only allow transition if sensor is activated
-    if self.sensor.activated and not self.transitioning then
+    if self.sensor.activated and not self.transitioning and (not self.door_cooldown or self.door_cooldown <= 0) then
         local len = collision.sphereIntersection(
             self.door,
             self.player.translation.x,
@@ -137,8 +171,15 @@ function Room1:update(dt)
             self.player.radius
         )
 
-        -- If intersecting with door, transition to room1
+        -- If intersecting with door, transition to room2
         if len then
+            -- Track room transition in undo stack
+            UndoStack:push({
+                type = 'room_transition',
+                from_room = Room1,
+                to_room = Room2
+            })
+
             self.transitioning = true
             toolkit:switch(Room2)
             return
@@ -188,7 +229,7 @@ function Room1:draw()
     -- Display controls in top right
     specialFont = love.graphics.newFont("assets/fonts/SuperCrossiant.ttf", 36)
 
-    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact"
+    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact\nZ - Undo"
     local text_width = love.graphics.getFont():getWidth("Controls:")
     love.graphics.printf(controls_text, specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
 end

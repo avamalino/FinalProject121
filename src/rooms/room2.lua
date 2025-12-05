@@ -3,6 +3,11 @@ local collision = require(pigic.collision)
 Room2 = {}
 
 function Room2:enter()
+    -- Reset transition flag to allow new transitions
+    self.transitioning = false
+    -- Set door cooldown to prevent immediate re-entry after undo
+    self.door_cooldown = 4
+
     if not self.camera then
         self.camera = class.camera3d(self)
         self.camera:add_camera('default', 0, 50, 50)
@@ -20,8 +25,15 @@ function Room2:enter()
     self.stuff = class.holder(self)
 
     -- Store a direct reference to the key for collision detection
+    -- Preserve picked state if it was already set
+    local was_picked = self.key and self.key.picked
     self.key = self.stuff:add(Key, 2, 0, -2, { angle = 0, axis = vec3(0, 1, 0) })
-    table.insert(self.solid, self.key)
+    -- Restore picked state
+    if was_picked then
+        self.key.picked = true
+    else
+        table.insert(self.solid, self.key)
+    end
 
     -- Add a door that requires the key to open
     self.door = self.stuff:add(Door, -3, 0, -4.25)
@@ -65,6 +77,17 @@ function Room2:init_eye_and_sun()
 end
 
 function Room2:update(dt)
+    -- Handle undo action
+    if input:pressed('undo') then
+        UndoStack:undo()
+        return
+    end
+
+    -- Decrement door cooldown timer
+    if self.door_cooldown and self.door_cooldown > 0 then
+        self.door_cooldown = self.door_cooldown - dt
+    end
+
     self.player:update(dt)
     self.stuff:update(dt)
 
@@ -85,6 +108,17 @@ function Room2:update(dt)
         -- If player is close enough to key and presses interact, pick it up
         local pickup_distance = self.player.radius + 0.5 -- player radius + small buffer
         if dist < pickup_distance and input:pressed('interact') then
+            -- Track item pickup in undo stack
+            UndoStack:push({
+                type = 'item_pickup',
+                item_type = 'key',
+                position = vec3(self.key.translation.x, self.key.translation.y, self.key.translation.z),
+                rotation = {
+                    angle = self.key.rotation.angle,
+                    axis = vec3(self.key.rotation.axis.x, self.key.rotation.axis.y, self.key.rotation.axis.z)
+                }
+            })
+
             self.key.picked = true
             -- Remove key from solid array so player doesn't collide with it
             for i, solid in ipairs(self.solid) do
@@ -97,7 +131,7 @@ function Room2:update(dt)
     end
 
     -- Check if player is touching door with the key
-    if self.key and self.key.picked and not self.transitioning then
+    if self.key and self.key.picked and not self.transitioning and (not self.door_cooldown or self.door_cooldown <= 0) then
         local len = collision.sphereIntersection(
             self.door,
             self.player.translation.x,
@@ -108,6 +142,13 @@ function Room2:update(dt)
 
         -- If intersecting with door, transition to room3
         if len then
+            -- Track room transition in undo stack
+            UndoStack:push({
+                type = 'room_transition',
+                from_room = Room2,
+                to_room = Room3
+            })
+
             self.transitioning = true
             toolkit:switch(Room3)
             return
@@ -148,7 +189,7 @@ function Room2:draw()
     end
 
     -- Display controls in top right
-    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact"
+    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact\nZ - Undo"
     local text_width = love.graphics.getFont():getWidth("Controls:")
     love.graphics.printf(controls_text, specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
 end
