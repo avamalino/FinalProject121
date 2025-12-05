@@ -177,6 +177,8 @@ function Room2:draw()
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
 
+    Joystick:draw()
+
     -- Display inventory contents for debugging
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print("Inventory:",specialFont, 10, 10, 0, 0.5, 0.5)
