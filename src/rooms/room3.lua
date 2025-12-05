@@ -80,7 +80,6 @@ function Room3:update(dt)
     self.player:update(dt)
     self.stuff:update(dt)
 
-    --local joystick = require('objects.touchJoystick')
     Joystick:update(dt)
     moveX = Joystick.joystick.sensing.motion.x() 
     moveZ = Joystick.joystick.sensing.motion.y()
@@ -129,7 +128,6 @@ function Room3:draw()
     -- Draw player
     self.player:draw()
 
-    --local joystick = require('objects.touchJoystick')
     Joystick:draw()
 
     graphics.set_shader()
