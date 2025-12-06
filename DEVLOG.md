@@ -42,3 +42,9 @@ Looking back on how you achieved the F3 requirements, how has your team’s plan
 3. Implement Offline Mode
    - [] save game
    - [] load game
+
+4. Touchscreen mode for phone and optional controls for computer
+   - [x] joystick to move the cat around
+   - [x] undo button
+   - [x] pickup button
+   - [x] inventory button

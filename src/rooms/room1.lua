@@ -13,32 +13,50 @@ function Room1:keypressed(key)
         return
     end
 end
+buttons = {
+    pickupButton = {
+        x = 1000,
+        y = love.graphics.getHeight() - 80,
+        w = 120,
+        h = 50,
+        text = "Pick Up",
+        visible = false,
+        clicked = false
+    },
 
-local pickupButton = {
-    x = 1000,
-    y = love.graphics.getHeight() -80,
-    w = 120,
-    h = 50,
-    text = "Pick Up",
-    visible = false
+    undoButton = {
+        x = 850,
+        y = love.graphics.getHeight() - 80,
+        w = 120,
+        h = 50,
+        text = "Undo",
+        visible = true,
+        clicked = false
+    },
+
+    inventoryButton = {
+         x = 1150,
+        y = love.graphics.getHeight() - 80,
+        w = 120,
+        h = 50,
+        text = "Inventory",
+        visible = true,
+        clicked = false
+    }
 }
 
 function love.mousepressed(x,y,button)
-    --if button == 1 and pickupButton.visible then
-    --    if x > pickupButton.x and x < pickupButton.x + pickupButton.w and
-    --        y > pickupButton.y and y < pickupButton.y + pickupButton.h then
-    --            pickupButton.clicked = true
-    --    end
-    --end
     if button == 1 then
-        print("Mouse pressed at:", x, y)
-        if pickupButton.visible and x >= pickupButton.x and x <= pickupButton.x + pickupButton.w
-           and y >= pickupButton.y and y <= pickupButton.y + pickupButton.h then
-            print("BUTTON CLICKED!")  -- Debug print
-            pickupButton.clicked = true
+        for name, btn in pairs(buttons) do
+            if btn.visible and 
+                x >= btn.x and x <= btn.x + btn.w and
+                y >= btn.y and y <= btn.y + btn.h then
+                btn.clicked = true
+            end
         end
     end
 end
+
 
 function Room1:enter()
     -- Reset transition flag to allow new transitions
@@ -133,6 +151,19 @@ function Room1:update(dt)
         UndoStack:undo()
         return
     end
+    if buttons.undoButton.clicked then 
+        UndoStack:undo()
+        buttons.undoButton.clicked = false
+        return
+    end
+
+    --inventory button
+    if buttons.inventoryButton.clicked then
+        Inventory:toggle()
+        buttons.inventoryButton.clicked = false
+        return
+    end
+
 
     -- Decrement door cooldown timer
     if self.door_cooldown and self.door_cooldown > 0 then
@@ -159,11 +190,10 @@ function Room1:update(dt)
         local dist = math.sqrt(dx * dx + dy * dy + dz * dz)
 
         -- If player is close enough and presses interact, pick it up
-        --local pickupPressed = input:pressed('interact') or pickupButton.clicked
 
         local pickup_distance = self.player.radius + 1.5
-        if (dist < pickup_distance) then pickupButton.visible = true else pickupButton.visible = false end
-        if dist < pickup_distance and (input:pressed('interact') or pickupButton.clicked) then
+        if (dist < pickup_distance) then buttons.pickupButton.visible = true else buttons.pickupButton.visible = false end
+        if dist < pickup_distance and (input:pressed('interact') or buttons.pickupButton.clicked) then
             -- Track item pickup in undo stack
             UndoStack:push({
                 type = 'item_pickup',
@@ -188,7 +218,7 @@ function Room1:update(dt)
         end
     end
 
-    pickupButton.clicked = false
+    buttons.pickupButton.clicked = false
     
 
     -- Check if player is touching door to transition to room2
@@ -248,23 +278,63 @@ function Room1:draw()
     love.graphics.setDepthMode("always", false)
 
     --draw Buttons
-    if pickupButton.visible then
+    if buttons.inventoryButton.visible then
         love.graphics.setColor(0.2, 0.8, 0.2, 1)
-        love.graphics.rectangle("fill", pickupButton.x, pickupButton.y, pickupButton.w, pickupButton.h, 8)
+        love.graphics.rectangle("fill", buttons.inventoryButton.x, buttons.inventoryButton.y, buttons.inventoryButton.w, buttons.inventoryButton.h, 8)
 
         --border
         love.graphics.setColor(0,0.3,0,1)
-        love.graphics.rectangle("line", pickupButton.x, pickupButton.y, pickupButton.w, pickupButton.h, 8)
+        love.graphics.rectangle("line", buttons.inventoryButton.x, buttons.inventoryButton.y, buttons.inventoryButton.w, buttons.inventoryButton.h, 8)
 
         --text
         love.graphics.setColor(1,1,1,1)
         --love.graphics.setFont(specialFont)
         love.graphics.printf(
-            pickupButton.text,
+            buttons.inventoryButton.text,
             specialFont,
-            pickupButton.x,
-            pickupButton.y + pickupButton.h/2-8,
-            pickupButton.w,
+            buttons.inventoryButton.x,
+            buttons.inventoryButton.y + buttons.inventoryButton.h/2-8,
+            buttons.inventoryButton.w,
+            "center"
+        )
+    end
+    if buttons.pickupButton.visible then
+        love.graphics.setColor(0.2, 0.8, 0.2, 1)
+        love.graphics.rectangle("fill", buttons.pickupButton.x, buttons.pickupButton.y, buttons.pickupButton.w, buttons.pickupButton.h, 8)
+
+        --border
+        love.graphics.setColor(0,0.3,0,1)
+        love.graphics.rectangle("line", buttons.pickupButton.x, buttons.pickupButton.y, buttons.pickupButton.w, buttons.pickupButton.h, 8)
+
+        --text
+        love.graphics.setColor(1,1,1,1)
+        --love.graphics.setFont(specialFont)
+        love.graphics.printf(
+            buttons.pickupButton.text,
+            specialFont,
+            buttons.pickupButton.x,
+            buttons.pickupButton.y + buttons.pickupButton.h/2-8,
+            buttons.pickupButton.w,
+            "center"
+        )
+    end
+    if buttons.undoButton.visible then
+        love.graphics.setColor(0.2, 0.8, 0.2, 1)
+        love.graphics.rectangle("fill", buttons.undoButton.x, buttons.undoButton.y, buttons.undoButton.w, buttons.undoButton.h, 8)
+
+        --border
+        love.graphics.setColor(0,0.3,0,1)
+        love.graphics.rectangle("line", buttons.undoButton.x, buttons.undoButton.y, buttons.undoButton.w, buttons.undoButton.h, 8)
+
+        --text
+        love.graphics.setColor(1,1,1,1)
+        --love.graphics.setFont(specialFont)
+        love.graphics.printf(
+            buttons.undoButton.text,
+            specialFont,
+            buttons.undoButton.x,
+            buttons.undoButton.y + buttons.undoButton.h/2-8,
+            buttons.undoButton.w,
             "center"
         )
     end
