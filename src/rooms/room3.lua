@@ -230,6 +230,7 @@ function Room3:draw()
             'center'
         )
     end
+    Joystick:draw()
 
     -- Display controls in top right
 

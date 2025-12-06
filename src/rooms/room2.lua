@@ -265,6 +265,7 @@ function Room2:draw()
             "center"
         )
     end
+    
     Joystick:draw()
 
     -- Display inventory contents

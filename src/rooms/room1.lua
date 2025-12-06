@@ -16,10 +16,11 @@ end
 buttons = {
     pickupButton = {
         x = 900,
-        y = love.graphics.getHeight() - 100,
+        --y = love.graphics.getHeight() - 100,
         w = 120,
         h = 50,
-        text = "Pick Up",
+        key = "rooms.room1.pickup",
+        text = i18n.t("rooms.room1.pickup"),
         visible = false,
         clicked = false
     },
@@ -29,7 +30,8 @@ buttons = {
         y = love.graphics.getHeight() - 100,
         w = 120,
         h = 50,
-        text = "Undo",
+        key = "rooms.room1.undo",
+        text = i18n.t("rooms.room1.undo"),
         visible = true,
         clicked = false
     },
@@ -39,13 +41,14 @@ buttons = {
         y = love.graphics.getHeight() - 100,
         w = 160,
         h = 50,
-        text = "Inventory",
+        key = "rooms.room1.inventory",
+        text = i18n.t("rooms.room1.inventory"),
         visible = true,
         clicked = false
     }
 }
 
-function Room1:mousepressed(x,y,button)
+function love.mousepressed(x,y,button)
     if button == 1 then
         for name, btn in pairs(buttons) do
             if btn.visible and 
@@ -56,7 +59,6 @@ function Room1:mousepressed(x,y,button)
         end
     end
 end
-
 
 function Room1:enter()
     -- Reset transition flag to allow new transitions
@@ -106,9 +108,6 @@ function Room1:enter()
 
     self:init_eye_and_sun()
 
-    --specialFont = love.graphics.newFont("assets/fonts/SuperCrossiant.ttf", 36)
-    specialFont = love.graphics.newFont("assets/fonts/NotoSansSC.ttf", 36)
-
     -- Load floor model
     self.floor_model = pigic.model('assets/obj/floor.obj', 'assets/png/palette.png')
     local floor = { translation = vec3(0, 0, 0), collider = self.floor_model.verts }
@@ -128,6 +127,10 @@ function Room1:enter()
         min_z = -4.5,
         max_z = 4.5 -- Front edge boundary
     }
+
+    buttons.pickupButton.y = love.graphics.getHeight() - 100
+    buttons.undoButton.y = love.graphics.getHeight() - 100
+    buttons.inventoryButton.y = love.graphics.getHeight() - 100
 end
 
 function Room1:init_eye_and_sun()
@@ -278,6 +281,9 @@ function Room1:draw()
     love.graphics.setShader()
     love.graphics.setDepthMode("always", false)
 
+    specialFont = love.graphics.newFont("assets/fonts/NotoSansSC.ttf", 36)
+    buttonFont = love.graphics.newFont("assets/fonts/NotoSansSC.ttf", 18)
+
     --draw Buttons
     if buttons.inventoryButton.visible then
         love.graphics.setColor(0.2, 0.8, 0.2, 1)
@@ -289,9 +295,8 @@ function Room1:draw()
 
         --text
         love.graphics.setColor(1,1,1,1)
-        --love.graphics.setFont(specialFont)
         love.graphics.printf(
-            buttons.inventoryButton.text,
+            i18n.t(buttons.inventoryButton.key),
             specialFont,
             buttons.inventoryButton.x,
             buttons.inventoryButton.y + buttons.inventoryButton.h/2-8,
@@ -310,10 +315,9 @@ function Room1:draw()
 
         --text
         love.graphics.setColor(1,1,1,1)
-        --love.graphics.setFont(specialFont)
         love.graphics.printf(
-            buttons.pickupButton.text,
-            specialFont,
+            i18n.t(buttons.pickupButton.key),
+            buttonFont,
             buttons.pickupButton.x,
             buttons.pickupButton.y + buttons.pickupButton.h/2-8,
             buttons.pickupButton.w,
@@ -330,10 +334,9 @@ function Room1:draw()
 
         --text
         love.graphics.setColor(1,1,1,1)
-        --love.graphics.setFont(specialFont)
         love.graphics.printf(
-            i18n.t(pickupButton.text),
-            specialFont,
+            i18n.t(buttons.undoButton.key),
+            buttonFont,
             buttons.undoButton.x,
             buttons.undoButton.y + buttons.undoButton.h/2-8,
             buttons.undoButton.w,

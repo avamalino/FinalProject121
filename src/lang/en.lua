@@ -9,6 +9,7 @@ return {
             controls = "Controls:\nWASD/Arrows - Move\nSpace - Interact\nZ - Undo\nI - Inventory",
             inventory = "Inventory",
             pickup = "Pick Up",
+            undo = "Undo",
         },
         room2 = {
             controls = "Controls:\nWASD/Arrows - Move\nSpace - Interact\nZ - Undo\nI - Inventory",
