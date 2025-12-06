@@ -49,7 +49,7 @@ jobs:
       - name: Copy build contents into web (PWA files)
         run: |
           mkdir -p build
-          cp -f build/* web/ || true
+          cp -rf build/* web/ || true
 
       - name: Show web contents
         run: ls -la web || true
