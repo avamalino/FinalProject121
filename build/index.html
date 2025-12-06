@@ -117,7 +117,7 @@
         window.addEventListener('load', function() {
           const swStatus = document.getElementById('swStatus');
           
-          navigator.serviceWorker.register('sw.js', { scope: './' })
+          navigator.serviceWorker.register('/FinalProject121/sw.js')
             .then(function(reg) {
               swStatus.textContent = 'SW: registered';
               
@@ -249,7 +249,7 @@
       // Register service worker for PWA functionality
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('sw.js', { scope: './' })
+          navigator.serviceWorker.register('/FinalProject121/sw.js')
             .catch(function(err) {
               console.error('ServiceWorker registration failed:', err);
             });

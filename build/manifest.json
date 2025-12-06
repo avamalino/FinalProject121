@@ -1,19 +1,19 @@
 {
   "name": "Campus Cat Express",
   "short_name": "Campus Cat",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/FinalProject121/",
+  "id": "/FinalProject121/",
   "display": "standalone",
   "background_color": "#0b5675",
   "theme_color": "#0b5675",
   "icons": [
     {
-      "src": "/theme/bg.png",
+      "src": "theme/bg.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/theme/bg.png",
+      "src": "theme/bg.png",
       "sizes": "512x512",
       "type": "image/png"
     }
