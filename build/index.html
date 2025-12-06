@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, minimum-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#0b5675">
+    <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+    <title>Campus Cat Express</title>
+
+    <!-- Load custom style sheet -->
+    <link rel="stylesheet" type="text/css" href="theme/love.css">
+    <style>
+      #offlineOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+      #offlineOverlay.show {
+        display: flex;
+      }
+      .offline-content {
+        max-width: 500px;
+        padding: 40px;
+      }
+      .offline-content h2 {
+        font-size: 2em;
+        margin-bottom: 20px;
+      }
+      .offline-content p {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+      .offline-content button {
+        background-color: #8ec3e3;
+        color: #0b5675;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1em;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      .offline-content button:hover {
+        background-color: #7ab3d3;
+      }
+      #swStatus {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: #8ec3e3;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-family: monospace;
+        z-index: 10000;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="swStatus">SW: loading...</div>
+    <div id="offlineOverlay">
+      <div class="offline-content">
+        <h2>🎮 Offline Mode</h2>
+        <p>You're currently offline but your game is cached and ready to play!</p>
+        <p id="offlineStatus">Waiting for network...</p>
+        <button onclick="location.reload()">Refresh Game</button>
+      </div>
+    </div>
+    <center>
+      <div>
+        <h1>Campus Cat Express</h1>
+        <canvas id="loadingCanvas" oncontextmenu="event.preventDefault()" width="800" height="600"></canvas>
+        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+      </div>
+    </center>
+
+    <script>
+      // Handle online/offline status
+      function updateOnlineStatus() {
+        const overlay = document.getElementById('offlineOverlay');
+        const status = document.getElementById('offlineStatus');
+        
+        if (!navigator.onLine) {
+          overlay.classList.add('show');
+          status.textContent = '⚠️ You are currently offline. The game is running from cached data.';
+        } else {
+          overlay.classList.remove('show');
+        }
+      }
+      
+      // Check initial state
+      window.addEventListener('load', updateOnlineStatus);
+      
+      // Listen for online/offline changes
+      window.addEventListener('online', updateOnlineStatus);
+      window.addEventListener('offline', updateOnlineStatus);
+      
+      // Also check periodically
+      setInterval(updateOnlineStatus, 1000);
+    </script>
+    <script>
+      // Register service worker for PWA functionality
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          const swStatus = document.getElementById('swStatus');
+          
+          navigator.serviceWorker.register('sw.js', { scope: './' })
+            .then(function(reg) {
+              swStatus.textContent = 'SW: registered';
+              
+              // Check if controlling
+              if (navigator.serviceWorker.controller) {
+                swStatus.textContent = 'SW: active ✓';
+              } else {
+                swStatus.textContent = 'SW: waiting';
+              }
+              
+              // Force activation
+              if (reg.waiting) {
+                reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+              }
+              
+              reg.addEventListener('updatefound', function() {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', function() {
+                  if (newWorker.state === 'activated') {
+                    swStatus.textContent = 'SW: active ✓';
+                  }
+                });
+              });
+            })
+            .catch(function(err) {
+              console.error('ServiceWorker registration failed:', err);
+              swStatus.textContent = 'SW: failed';
+            });
+          
+          // Check immediately if controlled
+          if (navigator.serviceWorker.controller) {
+            document.getElementById('swStatus').textContent = 'SW: active ✓';
+          }
+        });
+        
+        // Listen for messages from service worker
+        navigator.serviceWorker.addEventListener('message', function(event) {
+          // Handle service worker messages if needed
+        });
+      }
+    </script>
+    <script type='text/javascript'>
+      function goFullScreen(){
+            var canvas = document.getElementById("canvas");
+            if(canvas.requestFullScreen)
+                canvas.requestFullScreen();
+            else if(canvas.webkitRequestFullScreen)
+                canvas.webkitRequestFullScreen();
+            else if(canvas.mozRequestFullScreen)
+                canvas.mozRequestFullScreen();
+      }
+      function FullScreenHook(){
+        var canvas = document.getElementById("canvas");
+        canvas.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        canvas.height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      }
+      var loadingContext = document.getElementById('loadingCanvas').getContext('2d');
+      function drawLoadingText(text) {
+        var canvas = loadingContext.canvas;
+
+        loadingContext.fillStyle = "rgb(142, 195, 227)";
+        loadingContext.fillRect(0, 0, canvas.scrollWidth, canvas.scrollHeight);
+
+        loadingContext.font = '2em arial';
+        loadingContext.textAlign = 'center'
+        loadingContext.fillStyle = "rgb( 11, 86, 117 )";
+        loadingContext.fillText(text, canvas.scrollWidth / 2, canvas.scrollHeight / 2);
+
+        loadingContext.fillText("Powered By Emscripten.", canvas.scrollWidth / 2, canvas.scrollHeight / 4);
+        loadingContext.fillText("Powered By LÖVE.", canvas.scrollWidth / 2, canvas.scrollHeight / 4 * 3);
+      }
+
+      window.onload = function () { window.focus(); };
+      window.onclick = function () { window.focus(); };
+
+      window.addEventListener("keydown", function(e) {
+        // space and arrow keys
+        if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+          e.preventDefault();
+        }
+      }, false);
+
+      var Module = {
+        arguments: ["./game.love"],
+        INITIAL_MEMORY: 16777216,
+        printErr: console.error.bind(console),
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (text) {
+            drawLoadingText(text);
+          } else if (Module.remainingDependencies === 0) {
+            document.getElementById('loadingCanvas').style.display = 'none';
+            document.getElementById('canvas').style.visibility = 'visible';
+          }
+        },
+        totalDependencies: 0,
+        remainingDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.remainingDependencies = left;
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        }
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+      var applicationLoad = function(e) {
+        Love(Module);
+      }
+    </script>
+    <script type="text/javascript" src="game.js"></script>
+    <script async type="text/javascript" src="love.js" onload="applicationLoad(this)"></script>
+    <script>
+      // Register service worker for PWA functionality
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js', { scope: './' })
+            .catch(function(err) {
+              console.error('ServiceWorker registration failed:', err);
+            });
+        });
+      }
+    </script>
+    <footer>
+      <p>Built with <a href="https://github.com/Davidobot/love.js">love.js</a> <button onclick="goFullScreen();">Go Fullscreen</button><br>Hint: Reload the page if screen is blank</p>
+    </footer>
+  </body>
+</html>

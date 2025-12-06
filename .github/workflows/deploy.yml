@@ -46,10 +46,10 @@ jobs:
           mkdir -p web
           cp -f game.love web/game.love || true
 
-      - name: Copy love.css from build to web/theme
+      - name: Copy build contents into web (PWA files)
         run: |
-          mkdir -p web/theme
-          cp -f build/love.css web/theme/love.css || true
+          mkdir -p build
+          cp -f build/* web/ || true
 
       - name: Show web contents
         run: ls -la web || true

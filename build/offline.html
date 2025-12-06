@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, minimum-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#0b5675">
+    <title>Campus Cat Express - Offline</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background-color: #0b5675;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .offline-container {
+        text-align: center;
+        max-width: 500px;
+      }
+      h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+      button {
+        background-color: #8ec3e3;
+        color: #0b5675;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1em;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px;
+      }
+      button:hover {
+        background-color: #7ab3d3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="offline-container">
+      <h1>🎮 Campus Cat Express</h1>
+      <p>You're currently offline, but your game is ready to play!</p>
+      <p id="cache-status">Loading cached version...</p>
+      <button onclick="location.href='/'">Try Loading Game</button>
+      <button onclick="location.reload()">Refresh</button>
+    </div>
+    <script>
+      // Check if we have cached assets
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          const hasCampusCatCache = names.some(name => name.includes('campus-cat'));
+          const status = document.getElementById('cache-status');
+          if (hasCampusCatCache) {
+            status.textContent = 'Your game is cached and ready to play offline!';
+            status.style.color = '#8ec3e3';
+            // Auto-try to load in a moment
+            setTimeout(() => {
+              location.href = '/';
+            }, 2000);
+          } else {
+            status.textContent = 'Please connect to the internet to download the game for offline play.';
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
