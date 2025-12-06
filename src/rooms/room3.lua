@@ -83,6 +83,17 @@ function Room3:update(dt)
         UndoStack:undo()
         return
     end
+    if buttons.undoButton.clicked then 
+        UndoStack:undo()
+        buttons.undoButton.clicked = false
+        return
+    end
+    --inventory button
+    if buttons.inventoryButton.clicked then
+        Inventory:toggle()
+        buttons.inventoryButton.clicked = false
+        return
+    end
 
     -- Decrement door cooldown timer
     if self.door_cooldown and self.door_cooldown > 0 then
@@ -140,13 +151,53 @@ function Room3:draw()
     -- Draw player
     self.player:draw()
 
-    -- Draw inventory
     Inventory:draw()
+
 
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
 
-    Joystick:draw()
+    --draw Buttons
+    if buttons.inventoryButton.visible then
+        love.graphics.setColor(0.2, 0.8, 0.2, 1)
+        love.graphics.rectangle("fill", buttons.inventoryButton.x, buttons.inventoryButton.y, buttons.inventoryButton.w, buttons.inventoryButton.h, 8)
+
+        --border
+        love.graphics.setColor(0,0.3,0,1)
+        love.graphics.rectangle("line", buttons.inventoryButton.x, buttons.inventoryButton.y, buttons.inventoryButton.w, buttons.inventoryButton.h, 8)
+
+        --text
+        love.graphics.setColor(1,1,1,1)
+        --love.graphics.setFont(specialFont)
+        love.graphics.printf(
+            buttons.inventoryButton.text,
+            specialFont,
+            buttons.inventoryButton.x,
+            buttons.inventoryButton.y + buttons.inventoryButton.h/2-8,
+            buttons.inventoryButton.w,
+            "center"
+        )
+    end
+    if buttons.undoButton.visible then
+        love.graphics.setColor(0.2, 0.8, 0.2, 1)
+        love.graphics.rectangle("fill", buttons.undoButton.x, buttons.undoButton.y, buttons.undoButton.w, buttons.undoButton.h, 8)
+
+        --border
+        love.graphics.setColor(0,0.3,0,1)
+        love.graphics.rectangle("line", buttons.undoButton.x, buttons.undoButton.y, buttons.undoButton.w, buttons.undoButton.h, 8)
+
+        --text
+        love.graphics.setColor(1,1,1,1)
+        --love.graphics.setFont(specialFont)
+        love.graphics.printf(
+            buttons.undoButton.text,
+            specialFont,
+            buttons.undoButton.x,
+            buttons.undoButton.y + buttons.undoButton.h/2-8,
+            buttons.undoButton.w,
+            "center"
+        )
+    end
 
     -- Display inventory contents and instruction
     love.graphics.setColor(1, 1, 1, 1)
@@ -179,7 +230,7 @@ function Room3:draw()
             'center'
         )
     end
-    
+
     -- Display controls in top right
 
     local text_width = love.graphics.getFont():getWidth("Controls:")
