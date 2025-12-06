@@ -10,7 +10,8 @@ const gameZip = path.join(root, "game.zip");
 const gameLove = path.join(root, "game.love");
 const webDir = path.join(root, "web");
 const webGameLove = path.join(webDir, "game.love");
-const buildDir = path.join(root, "build");
+const buildLoveCss = path.join(root, "build", "theme", "love.css");
+const webThemeLoveCss = path.join(webDir, "theme", "love.css");
 
 function runSync(cmd, args, opts = {}) {
   console.log("> " + [cmd].concat(args || []).join(" "));
@@ -78,35 +79,17 @@ function buildOnce() {
     console.warn("Could not copy game.love into web/ (ignored):", e.message);
   }
 
-  // Copy entire build directory contents into web
   try {
-    console.log("Copying build/ contents to web/...");
-    copyDir(buildDir, webDir);
-    console.log("Copied build/ contents to web/");
+    fs.mkdirSync(path.join(webDir, "theme"), { recursive: true });
+    fs.copyFileSync(buildLoveCss, webThemeLoveCss);
+    console.log("Copied love.css from build/theme/ to web/theme/");
   } catch (e) {
     console.warn(
-      "Could not copy build/ contents into web/ (ignored):",
+      "Could not copy love.css into web/theme/ (ignored):",
       e.message,
     );
   }
   console.log("Build complete.");
-}
-
-// Helper function to recursively copy directory contents
-function copyDir(src, dest) {
-  fs.mkdirSync(dest, { recursive: true });
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyDir(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
 }
 
 function startVite() {
