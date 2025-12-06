@@ -70,7 +70,16 @@ function buildOnce() {
       webDir,
     ]);
   } else {
-    runSync("npx", ["love.js", "-c", "-t", gameName, gameLove, webDir]);
+    runSync("npx", [
+      "love.js",
+      "-c",
+      "-t",
+      gameName,
+      gameLove,
+      webDir,
+      "-m",
+      "100000000", // allocating memory limit to 100MB
+    ]);
   }
   try {
     fs.mkdirSync(webDir, { recursive: true });

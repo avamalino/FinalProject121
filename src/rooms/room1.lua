@@ -1,9 +1,9 @@
 local collision = require(pigic.collision)
+local i18n = require("lang.i18n")
 
 Room1 = {}
 
---inventory
-
+-- Inventory
 function Room1:keypressed(key)
     if key == "i" then
         Inventory:toggle()
@@ -19,17 +19,11 @@ local pickupButton = {
     y = love.graphics.getHeight() -80,
     w = 120,
     h = 50,
-    text = "Pick Up",
-    visible = false
+    text = "rooms.room1.pickup",
+    visible = false,
 }
 
-function love.mousepressed(x,y,button)
-    --if button == 1 and pickupButton.visible then
-    --    if x > pickupButton.x and x < pickupButton.x + pickupButton.w and
-    --        y > pickupButton.y and y < pickupButton.y + pickupButton.h then
-    --            pickupButton.clicked = true
-    --    end
-    --end
+function Room1:mousepressed(x,y,button)
     if button == 1 then
         print("Mouse pressed at:", x, y)
         if pickupButton.visible and x >= pickupButton.x and x <= pickupButton.x + pickupButton.w
@@ -88,7 +82,8 @@ function Room1:enter()
 
     self:init_eye_and_sun()
 
-    specialFont = love.graphics.newFont("assets/fonts/SuperCrossiant.ttf", 36)
+    --specialFont = love.graphics.newFont("assets/fonts/SuperCrossiant.ttf", 36)
+    specialFont = love.graphics.newFont("assets/fonts/NotoSansSC.ttf", 36)
 
     -- Load floor model
     self.floor_model = pigic.model('assets/obj/floor.obj', 'assets/png/palette.png')
@@ -260,7 +255,7 @@ function Room1:draw()
         love.graphics.setColor(1,1,1,1)
         --love.graphics.setFont(specialFont)
         love.graphics.printf(
-            pickupButton.text,
+            i18n.t(pickupButton.text),
             specialFont,
             pickupButton.x,
             pickupButton.y + pickupButton.h/2-8,
@@ -277,7 +272,7 @@ function Room1:draw()
 
     -- Display inventory contents
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print("Inventory:", specialFont, 10, 10, 0, 0.5, 0.5)
+    love.graphics.print(i18n.t("rooms.room1.inventory"), specialFont, 10, 10, 0, 0.5, 0.5)
     local y_offset = 30
     for i, item in ipairs(Inventory.items) do
         love.graphics.print("- " .. item, specialFont, 10, y_offset, 0, 0.5, 0.5)
@@ -286,9 +281,8 @@ function Room1:draw()
 
     -- Display controls in top right
 
-    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact\nZ - Undo\nI - Inventory"
     local text_width = love.graphics.getFont():getWidth("Controls:")
-    love.graphics.printf(controls_text, specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
+    love.graphics.printf(i18n.t("rooms.room1.controls"), specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
 end
 
 function Room1:exit()
