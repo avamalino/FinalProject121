@@ -37,7 +37,7 @@ buttons = {
     inventoryButton = {
          x = 1150,
         y = love.graphics.getHeight() - 80,
-        w = 120,
+        w = 160,
         h = 50,
         text = "Inventory",
         visible = true,
@@ -295,7 +295,8 @@ function Room1:draw()
             buttons.inventoryButton.x,
             buttons.inventoryButton.y + buttons.inventoryButton.h/2-8,
             buttons.inventoryButton.w,
-            "center"
+            "center",
+            nil, 0.75
         )
     end
     if buttons.pickupButton.visible then
