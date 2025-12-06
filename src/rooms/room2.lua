@@ -186,11 +186,11 @@ function Room2:draw()
     -- Draw player
     self.player:draw()
 
-
+    Inventory:draw()
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
 
-    Joystick:draw()
+    
 --draw Buttons
     if buttons.inventoryButton.visible then
         love.graphics.setColor(0.2, 0.8, 0.2, 1)
@@ -253,6 +253,7 @@ function Room2:draw()
             "center"
         )
     end
+    Joystick:draw()
 
     -- Display inventory contents for debugging
     love.graphics.setColor(1, 1, 1, 1)

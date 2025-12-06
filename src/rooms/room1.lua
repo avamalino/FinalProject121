@@ -15,8 +15,8 @@ function Room1:keypressed(key)
 end
 buttons = {
     pickupButton = {
-        x = 1000,
-        y = love.graphics.getHeight() - 80,
+        x = 900,
+        y = love.graphics.getHeight() - 100,
         w = 120,
         h = 50,
         text = "Pick Up",
@@ -25,8 +25,8 @@ buttons = {
     },
 
     undoButton = {
-        x = 850,
-        y = love.graphics.getHeight() - 80,
+        x = 750,
+        y = love.graphics.getHeight() - 100,
         w = 120,
         h = 50,
         text = "Undo",
@@ -35,8 +35,8 @@ buttons = {
     },
 
     inventoryButton = {
-         x = 1150,
-        y = love.graphics.getHeight() - 80,
+         x = 1050,
+        y = love.graphics.getHeight() - 100,
         w = 160,
         h = 50,
         text = "Inventory",

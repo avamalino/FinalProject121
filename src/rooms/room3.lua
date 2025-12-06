@@ -139,11 +139,12 @@ function Room3:draw()
     -- Draw player
     self.player:draw()
 
+    Inventory:draw()
+
 
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
 
-    Joystick:draw()
     --draw Buttons
     if buttons.inventoryButton.visible then
         love.graphics.setColor(0.2, 0.8, 0.2, 1)
@@ -217,6 +218,7 @@ function Room3:draw()
             'center'
         )
     end
+    Joystick:draw()
 
     -- Display controls in top right
     love.graphics.setColor(1, 1, 1, 1)
