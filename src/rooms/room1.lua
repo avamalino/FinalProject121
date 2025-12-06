@@ -14,6 +14,32 @@ function Room1:keypressed(key)
     end
 end
 
+local pickupButton = {
+    x = 1000,
+    y = love.graphics.getHeight() -80,
+    w = 120,
+    h = 50,
+    text = "Pick Up",
+    visible = false
+}
+
+function love.mousepressed(x,y,button)
+    --if button == 1 and pickupButton.visible then
+    --    if x > pickupButton.x and x < pickupButton.x + pickupButton.w and
+    --        y > pickupButton.y and y < pickupButton.y + pickupButton.h then
+    --            pickupButton.clicked = true
+    --    end
+    --end
+    if button == 1 then
+        print("Mouse pressed at:", x, y)
+        if pickupButton.visible and x >= pickupButton.x and x <= pickupButton.x + pickupButton.w
+           and y >= pickupButton.y and y <= pickupButton.y + pickupButton.h then
+            print("BUTTON CLICKED!")  -- Debug print
+            pickupButton.clicked = true
+        end
+    end
+end
+
 function Room1:enter()
     -- Reset transition flag to allow new transitions
     self.transitioning = false
@@ -62,6 +88,8 @@ function Room1:enter()
 
     self:init_eye_and_sun()
 
+    specialFont = love.graphics.newFont("assets/fonts/SuperCrossiant.ttf", 36)
+
     -- Load floor model
     self.floor_model = pigic.model('assets/obj/floor.obj', 'assets/png/palette.png')
     local floor = { translation = vec3(0, 0, 0), collider = self.floor_model.verts }
@@ -99,6 +127,7 @@ function Room1:init_eye_and_sun()
 end
 
 function Room1:update(dt)
+
     -- Handle undo action
     if input:pressed('undo') then
         UndoStack:undo()
@@ -130,8 +159,11 @@ function Room1:update(dt)
         local dist = math.sqrt(dx * dx + dy * dy + dz * dz)
 
         -- If player is close enough and presses interact, pick it up
+        --local pickupPressed = input:pressed('interact') or pickupButton.clicked
+
         local pickup_distance = self.player.radius + 1.5
-        if dist < pickup_distance and input:pressed('interact') then
+        if (dist < pickup_distance) then pickupButton.visible = true else pickupButton.visible = false end
+        if dist < pickup_distance and (input:pressed('interact') or pickupButton.clicked) then
             -- Track item pickup in undo stack
             UndoStack:push({
                 type = 'item_pickup',
@@ -155,6 +187,9 @@ function Room1:update(dt)
             end
         end
     end
+
+    pickupButton.clicked = false
+    
 
     -- Check if player is touching door to transition to room2
     -- Only allow transition if sensor is activated
@@ -209,8 +244,32 @@ function Room1:draw()
     -- Draw inventory
     Inventory:draw()
 
-    graphics.set_shader()
-    love.graphics.setDepthMode('always', false)
+    love.graphics.setShader()
+    love.graphics.setDepthMode("always", false)
+
+    --draw Buttons
+    if pickupButton.visible then
+        love.graphics.setColor(0.2, 0.8, 0.2, 1)
+        love.graphics.rectangle("fill", pickupButton.x, pickupButton.y, pickupButton.w, pickupButton.h, 8)
+
+        --border
+        love.graphics.setColor(0,0.3,0,1)
+        love.graphics.rectangle("line", pickupButton.x, pickupButton.y, pickupButton.w, pickupButton.h, 8)
+
+        --text
+        love.graphics.setColor(1,1,1,1)
+        --love.graphics.setFont(specialFont)
+        love.graphics.printf(
+            pickupButton.text,
+            specialFont,
+            pickupButton.x,
+            pickupButton.y + pickupButton.h/2-8,
+            pickupButton.w,
+            "center"
+        )
+    end
+
+    love.graphics.setColor(1,1,1,1)
 
     --draw joystick
     
@@ -226,7 +285,6 @@ function Room1:draw()
     end
 
     -- Display controls in top right
-    specialFont = love.graphics.newFont("assets/fonts/SuperCrossiant.ttf", 36)
 
     local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact\nZ - Undo\nI - Inventory"
     local text_width = love.graphics.getFont():getWidth("Controls:")
