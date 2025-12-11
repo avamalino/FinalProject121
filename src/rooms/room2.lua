@@ -1,18 +1,6 @@
 local collision = require(pigic.collision)
-local i18n = require("lang.i18n")
 
 Room2 = {}
-
--- Inventory
-function Room2:keypressed(key)
-    if key == "i" then
-        Inventory:toggle()
-        return
-    elseif key == "escape" then
-        Inventory:hide()
-        return
-    end
-end
 
 function Room2:enter()
     -- Reset transition flag to allow new transitions
@@ -265,22 +253,21 @@ function Room2:draw()
             "center"
         )
     end
-    
     Joystick:draw()
 
-    -- Display inventory contents
+    -- Display inventory contents for debugging
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print(i18n.t("rooms.room1.inventory"), specialFont, 10, 10, 0, 0.5, 0.5)
+    love.graphics.print("Inventory:",specialFont, 10, 10, 0, 0.5, 0.5)
     local y_offset = 30
     for i, item in ipairs(Inventory.items) do
-        love.graphics.print("- " .. item, specialFont, 10, y_offset, 0, 0.5, 0.5)
+        love.graphics.print("- " .. item,specialFont, 10, y_offset, 0, 0.5, 0.5)
         y_offset = y_offset + 20
     end
 
     -- Display controls in top right
-
+    local controls_text = "Controls:\nWASD/Arrows - Move\nSpace - Interact\nZ - Undo"
     local text_width = love.graphics.getFont():getWidth("Controls:")
-    love.graphics.printf(i18n.t("rooms.room1.controls"), specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
+    love.graphics.printf(controls_text, specialFont, love.graphics.getWidth() - text_width - 150, 10, 500, 'left', nil, 0.5)
 end
 
 function Room2:exit()
