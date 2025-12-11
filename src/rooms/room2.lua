@@ -1,4 +1,5 @@
 local collision = require(pigic.collision)
+local ButtonUI = require('toolkit.button-ui')
 
 Room2 = {}
 
@@ -190,69 +191,9 @@ function Room2:draw()
     graphics.set_shader()
     love.graphics.setDepthMode('always', false)
 
-    
---draw Buttons
-    if buttons.inventoryButton.visible then
-        love.graphics.setColor(0.2, 0.8, 0.2, 1)
-        love.graphics.rectangle("fill", buttons.inventoryButton.x, buttons.inventoryButton.y, buttons.inventoryButton.w, buttons.inventoryButton.h, 8)
+    -- Draw all buttons
+    ButtonUI:draw_all(buttons)
 
-        --border
-        love.graphics.setColor(0,0.3,0,1)
-        love.graphics.rectangle("line", buttons.inventoryButton.x, buttons.inventoryButton.y, buttons.inventoryButton.w, buttons.inventoryButton.h, 8)
-
-        --text
-        love.graphics.setColor(1,1,1,1)
-        --love.graphics.setFont(specialFont)
-        love.graphics.printf(
-            buttons.inventoryButton.text,
-            specialFont,
-            buttons.inventoryButton.x,
-            buttons.inventoryButton.y + buttons.inventoryButton.h/2-8,
-            buttons.inventoryButton.w,
-            "center"
-        )
-    end
-    if buttons.pickupButton.visible then
-        love.graphics.setColor(0.2, 0.8, 0.2, 1)
-        love.graphics.rectangle("fill", buttons.pickupButton.x, buttons.pickupButton.y, buttons.pickupButton.w, buttons.pickupButton.h, 8)
-
-        --border
-        love.graphics.setColor(0,0.3,0,1)
-        love.graphics.rectangle("line", buttons.pickupButton.x, buttons.pickupButton.y, buttons.pickupButton.w, buttons.pickupButton.h, 8)
-
-        --text
-        love.graphics.setColor(1,1,1,1)
-        --love.graphics.setFont(specialFont)
-        love.graphics.printf(
-            buttons.pickupButton.text,
-            specialFont,
-            buttons.pickupButton.x,
-            buttons.pickupButton.y + buttons.pickupButton.h/2-8,
-            buttons.pickupButton.w,
-            "center"
-        )
-    end
-
-    if buttons.undoButton.visible then
-        love.graphics.setColor(0.2, 0.8, 0.2, 1)
-        love.graphics.rectangle("fill", buttons.undoButton.x, buttons.undoButton.y, buttons.undoButton.w, buttons.undoButton.h, 8)
-
-        --border
-        love.graphics.setColor(0,0.3,0,1)
-        love.graphics.rectangle("line", buttons.undoButton.x, buttons.undoButton.y, buttons.undoButton.w, buttons.undoButton.h, 8)
-
-        --text
-        love.graphics.setColor(1,1,1,1)
-        --love.graphics.setFont(specialFont)
-        love.graphics.printf(
-            buttons.undoButton.text,
-            specialFont,
-            buttons.undoButton.x,
-            buttons.undoButton.y + buttons.undoButton.h/2-8,
-            buttons.undoButton.w,
-            "center"
-        )
-    end
     Joystick:draw()
 
     -- Display inventory contents for debugging
