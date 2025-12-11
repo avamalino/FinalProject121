@@ -1,12 +1,9 @@
-local i18n = require("lang.i18n")
-i18n.setLanguage("en")
-
 -- Global inventory system
 Inventory = {
     items = {},
     visible = false,
 
-    name = i18n.t("inventory.name"),
+    name = "Inventory",
 
     size = 64,
     spacing = 74,
@@ -18,8 +15,7 @@ Inventory = {
     cell = 64,
     cell_pad = 12,
 
-    footer_text = i18n.t("inventory.footer_text"),
-
+    footer_text = "Hit ESC to close",
     show_item_names = true,
 }
 
@@ -104,6 +100,19 @@ function Inventory:draw()
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.rectangle("line", cx, cy, cell, cell)
 
+        -- Inventory Title
+        if self.name then
+            love.graphics.setColor(1, 1, 1, 1)
+            local font = love.graphics.getFont()
+            local tw = font:getWidth(self.name)
+
+            love.graphics.print(
+                self.name,
+                x + (self.popup_w - tw) / 2,   -- centered
+                y + self.cell_pad              -- slight top padding
+            )
+        end
+
         -- Draw item image --> need to draw in 3D
         if item.image then
             local scale = cell / item.image:getWidth()
@@ -113,41 +122,28 @@ function Inventory:draw()
         -- Draw item name + on hover, show description of item
         -- implement this later
     end
-    
-    inventoryFont = love.graphics.newFont("assets/fonts/NotoSansSC.ttf", 14)
 
-    -- Inventory Title
-    love.graphics.setColor(1, 1, 1, 1)
+    -- Item count text
+    local count_text = string.format("%d Items", #self.items)
     local font = love.graphics.getFont()
-    local tw = font:getWidth(i18n.t("inventory.name"))
-
-    love.graphics.print(
-        i18n.t("inventory.name"),
-        inventoryFont,
-        x + (self.popup_w - tw) / 2,
-        y + self.cell_pad
-    )
-
-     -- Item count text
-    local count_text = string.format(i18n.t("inventory.items"), #self.items)
     local cw = font:getWidth(count_text)
 
     love.graphics.setColor(1, 1, 1, 0.9)
     love.graphics.print(
         count_text,
-        inventoryFont,
         x + self.popup_w - cw - self.cell_pad,
         y + self.cell_pad
     )
 
     -- Footer
     love.graphics.setColor(1, 1, 1, 0.9)
-    local fw = font:getWidth(i18n.t("inventory.footer_text"))
+    local ft = self.footer_text
+    local font = love.graphics.getFont()
+    local fw = font:getWidth(ft)
     local fh = font:getHeight()
 
     love.graphics.print(
-        i18n.t("inventory.footer_text"),
-        inventoryFont,
+        ft,
         x + (self.popup_w - fw) / 2,
         y + self.popup_h - fh - self.cell_pad
     )
