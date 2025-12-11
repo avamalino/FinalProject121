@@ -2,12 +2,8 @@ toolkit = require 'toolkit'
 Inventory = require 'inventory'
 UndoStack = require 'undo-stack'
 
-local i18n = require("lang.i18n")
-
 function love.load()
     toolkit:init()
-
-    i18n.setLanguage("en")
 
     input:bind('w', 'up')
     input:bind('s', 'down')
@@ -54,11 +50,5 @@ function require_files(t)
     for _, file in ipairs(t) do
         local file = file:sub(1, -5)
         require(file)
-    end
-end
-
-function love.mousepressed(x, y, button)
-    if toolkit.current and toolkit.current.mousepressed then
-        toolkit.current:mousepressed(x, y, button)
     end
 end
