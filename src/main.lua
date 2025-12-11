@@ -57,18 +57,6 @@ function require_files(t)
     end
 end
 
-function love.keypressed(key)
-    if key == "1" then i18n.setLanguage("en") 
-        print("english")
-    end
-    if key == "2" then i18n.setLanguage("zh") 
-        print("chinese")
-    end
-    --if key == "3" then i18n.setLanguage("ar") 
-    --    print("arabic")
-    --end
-end
-
 function love.mousepressed(x, y, button)
     if toolkit.current and toolkit.current.mousepressed then
         toolkit.current:mousepressed(x, y, button)
